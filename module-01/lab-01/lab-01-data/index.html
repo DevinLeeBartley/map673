@@ -97,17 +97,17 @@
 <body>
     <header>
 
-        <h1>Map Title</h1>
-        <h2>Map Subtitle</h2>
+        <h1></h1>
+        <h2></h2>
     </header>
 
     <div id='map'></div>
 
     <footer>
-        <p>Map authored by YOUR NAME</p>
-        <p>Additional information about the data and map goes here.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis urna magna, maximus nec laoreet sit amet, dictum ultricies nibh. Ut id auctor lacus. Nam a dolor et justo luctus luctus. Duis a elit eget risus dictum vehicula id eu elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed sed enim nisl. Vestibulum commodo imperdiet lacus, sed facilisis erat placerat sit amet. Nulla consequat malesuada neque eget aliquet. Integer non convallis nisl, gravida ultrices ex. Fusce nec vestibulum elit. Sed elementum lectus ipsum, vulputate elementum ex laoreet a. Aenean eu ex varius, varius felis vitae, efficitur nulla. Quisque pretium laoreet ante, in sodales dui vehicula at. Mauris eu sem sapien.
-        </p>
+        <p>Map authored by Devin Bartley</p>
+        <p>This map shows the number of vacant houses as a proportion of the total number of housing units per county. Its purpose is to illustrate the disparity in vacancy rates across the state and bring to attention where abnormally high and low rates of vacancy exist. </p>
+        <p>The cartographic symbology in this map significantly influences the interpretation of the data, since the map maker has complete control of the class breaks and color schemes used even if the underlying values that are mapped are not changed. For example, if the data was classified into two class breaks symbolized by very similar colors the map would communicate that vacancy rates did not deviate significantly statewide and were generally equalized. In a similar vein, showing the high vacancy rate counties in progressive shades of red and low vacancy rate counties in shades of blue would highlight the severity of the vacancy rate inequality. The cartographer has ultimate control over what this map communicates through modification of the symbology to create visual impressions. </p> 
+        <p>This map would support the point of view that vacancy rates are relatively low in north central Kentucky, and that Menifee and Lyon counties have a very high relative rate of vacancy. This could be used to argue many different positions about the state of the economy or housing market across the state and the effect that these conditions have on residents in certain areas.</p>
     </footer>
 
     <script>
@@ -117,7 +117,9 @@
             , zoomControl: false
         }
 
-        $("h1").html("Housing Ownership in Kentucky");
+        $("h1").html("Vacancy Rates in Kentucky");
+        $("h2").html("Shown as a proportion of the total number of housing units in each county");
+        
 
         var map = L.map('map', options);
 
@@ -126,8 +128,8 @@
         }));
 
         var dataLayer
-            , attribute = "OWNED_MORT"
-            , norm = "OWNER";
+            , attribute = "VACANT"
+            , norm = "TOTAL";
 
         $.getJSON("ky_counties_housing.json", function (data) {
 
@@ -142,21 +144,25 @@
                 }
             }).addTo(map);
 
+
             drawMap();
 
         });
-        // add a call to a new function named drawMap here
+        
         function drawMap() {
 
             var breaks = getClassBreaks();
 
             dataLayer.eachLayer(function (layer) {
+                var percentage = layer.feature.properties[attribute] / layer.feature.properties[norm];
                 layer.setStyle({
                         fillColor: getColor(layer.feature.properties[attribute] / layer.feature.properties[norm], breaks)
                     })
-                    //                console.log(layer.feature.properties);
-
+                layer.bindPopup("<b>" + layer.feature.properties.NAME + "</b> County: <br>" + attribute + ": " + (percentage * 100).toLocaleString() + "%");
+            console.log(layer.feature.properties);
             });
+            
+
             drawLegend(breaks);
         };
 
@@ -209,23 +215,16 @@
 
                     div.innerHTML +=
                         '<span style="background:' + color + '"></span> ' +
-                        '<label>' + (breaks[i][0] * 100).toLocaleString() + ' &mdash; ' +
-                        (breaks[i][1] * 100).toLocaleString() + '</label>';
+                        '<label>' + (breaks[i][0] * 100).toLocaleString() +"%" + ' &mdash; ' +
+                        (breaks[i][1] * 100).toLocaleString() + "%" + '</label>';
                 }
 
                 return div;
             };
             legend.addTo(map);
-            console.log(breaks + "These are breaks");
-            // function code will go in here
-
 
         }
 
-
-
-
-        // WRITE YOUR CODE JAVASCRIPT CODE HERE
     </script>
 
 </body>
