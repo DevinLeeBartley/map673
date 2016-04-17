@@ -88,6 +88,19 @@
             clear: both;
         }
         
+        .info {
+            padding: 6px 8px;
+            font-size: 1em;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            text-align: right;
+        }
+        
+        .info h3 {
+            margin: 0;
+        }
+        
         .leaflet-popup-content {
             max-width: 160px;
         }
@@ -116,14 +129,12 @@
     <div id='ui-controls'>
         <label>Choose a data attribute:</label>
         <select id="occupied">
-            <!--            the selected boolean below indicates which is the default value-->
+            <!--            The selected boolean below indicates which is the default value-->
             <option value="OWNED_MORT" selected>owned with mortgage</option>
             <option value="OWNED_FREE">owned free and clear</option>
             <option value="RENTER">rented</option>
         </select>
     </div>
-
-    <div id='map'></div>
 
     <div id='map'></div>
 
@@ -135,24 +146,36 @@
     </footer>
 
     <script>
+        
+//        creating labels that relate to attribute properties. These will be input into the legend and options box to improve legibility
+        var labels = {
+            "OCCUPIED": "occupied units",
+            "OWNED_MORT": "% occupied housing units owned with mortgage",
+            "OWNED_FREE": "% occupied housing units owned free and clear",
+            "RENTER": "% occupied housing units rented"
+        }
+        
+//        declare the options that will define the map and be passed to the L.map function
         var options = {
             center: [37.8, -85.8]
             , zoom: 7.4
+            , minZoom: 7.4
+            , maxZoom: 7.4
+            , dragging: false
             , zoomControl: false
         }
+        
+//        create a map using leaflet and pass it the options above
         var map = L.map('map', options);
 
-        map.addControl(L.control.zoom({
-            position: 'topright'
-        }));
-
+//        create global variables for the dataLayer, attribute, and norm (the attribute will be changed later but the default is OWNED_MORT)
         var dataLayer
             , attribute = "OWNED_MORT"
             , norm = "OCCUPIED";
 
         //        Use jQuery to load the JSON file into the map
         $.getJSON("ky_counties_housing.json", function (data) {
-            //Use leaflet to turn the json file into a geoJson layer
+            //Use leaflet to turn the json file into a geoJson layer with a particular style
             dataLayer = L.geoJson(data, {
                 style: function (feature) {
                     return {
@@ -164,9 +187,17 @@
                 }
             }).addTo(map);
 
+//            call the drawLegend function
+            drawLegend();
+
+//            call the drawMap function
             drawMap();
 
+//            call the buildID function
             buildUI();
+
+//            call the drawInfo function
+            drawInfo();
 
         });
 
@@ -174,37 +205,6 @@
         function drawMap() {
 
             var breaks = getClassBreaks();
-
-            function drawLegend(breaks) {
-
-                var legend = L.control({
-                    position: 'topleft'
-                });
-
-                legend.onAdd = function () {
-
-                    var div = L.DomUtil.create('div', 'legend');
-
-                    div.innerHTML = "<h3>" + attribute + " per " + norm + "</h3>";
-
-                    for (var i = 0; i < breaks.length; i++) {
-
-                        var color = getColor(breaks[i][0], breaks);
-
-                        div.innerHTML +=
-                            '<span style="background:' + color + '"></span> ' +
-                            '<label>' + (breaks[i][0] * 100).toLocaleString() + ' &mdash; ' +
-                            (breaks[i][1] * 100).toLocaleString() + '</label>';
-                    }
-
-                    return div;
-
-
-                };
-
-                legend.addTo(map);
-            }
-
 
 
             dataLayer.eachLayer(function (layer) {
@@ -216,33 +216,105 @@
                         props[norm], breaks)
                 });
                 layer.bindPopup("<b>" + props["NAME"] + " County</b></br>" +
-                    attribute + ": " +
+                    labels[attribute] + ": " +
                     ((props[attribute] / props[norm]) * 100).toLocaleString() + "%");
             });
 
-            drawLegend(breaks);
+            updateLegend(breaks);
+
         }
-        
-//        this function selects the element and then runs an event handles when the user changes the select portion of th element
+
+        function drawInfo() {
+            var info = L.control({
+                position: 'topright'
+            });
+
+            info.onAdd = function (map) {
+
+                var div = L.DomUtil.create('div', 'info');
+
+                return div;
+            }
+
+            info.addTo(map);
+            $(".info").hide();
+        }
+
+        function updateInfo(layer) {
+
+            var props = layer.feature.properties;
+
+            var html = "<h3>" + props['NAME'] + " County</h3>" +
+                "total # occupied units: <b>" + props["OCCUPIED"] + "</b><br>" +
+                "# owned with mortgage or loan: <b>" + props["OWNED_MORT"] + "</b><br>" +
+                "# owned free and clear: <b>" + props["OWNED_FREE"] + "</b><br>" +
+                "# occupied by renters: <b>" + props["RENTER"] + "</b>"
+
+            $(".info").html(html);
+        }
+
+        //        this function selects the element and then runs an event handles when the user changes the select portion of the element
         function buildUI() {
             $('select[id="occupied"]').change(function () {
-//                the term 'this' refers to the context of the event. val() refers to the attribute value of the option. the $ sign must be inserted to use the jquery functionality.
+                //                the term 'this' refers to the context of the event. val() refers to the attribute value of the option. the $ sign must be inserted to use the jquery functionality.
                 console.log($(this).val());
                 attribute = $(this).val();
+                drawMap();
             });
         };
 
+
+
+        function updateLegend(breaks) {
+
+            var legend = $('.legend');
+
+            legend.html("<h3>" + labels[attribute] + "</h3>");
+
+            for (var i = 0; i < breaks.length; i++) {
+
+                var color = getColor(breaks[i][0], breaks);
+
+                legend.append(
+                    '<span style="background:' + color + '"></span> ' +
+                    '<label>' + (breaks[i][0] * 100).toLocaleString() + ' &mdash; ' +
+                    (breaks[i][1] * 100).toLocaleString() + '</label>');
+
+            }
+        }
+
+//        the getClassBreaks function creates a list of values showing the percentages for each layer, and then runs the ckmeans method to determine clusters, returning an array showing the minimum and maximum value of each cluster as a breaks variable.
         function getClassBreaks() {
-
+            
+//            create empty values list to populate with all the available values in the layer
             var values = [];
-
+            
+//            loop through each layer and populate a list of the selected attribute value divided by the norm (to get a percentage of total)
             dataLayer.eachLayer(function (layer) {
                 var value = layer.feature.properties[attribute] / layer.feature.properties[norm];
+//                the .push command appends each layer's value to the list
                 values.push(value);
+
+                //                add a mouseover event for each layer that calls the updateInfo function passing the current mouseover layer ('this') on to the function. The updateInfo function creates a popup based on what variable is currently selected.
+                layer.on('mouseover', function () {
+                    updateInfo(this);
+                });
+            });
+            
+//            show the dataLayer info on mouseover. The jQuery command $(".info") is used to select the info element
+            dataLayer.on('mouseover', function () {
+                $(".info").show();
             });
 
+            //            hide the dataLayer info on mouseout. this will ensure that the info popup is hidden by default unless you are hovering over a layer. 
+            dataLayer.on('mouseout', function () {
+                $(".info").hide();
+            });
+
+//            use the ss.ckmeans method to group the list of values into 5 categories (similar to natural breaks). the ckmeans function comes from the simple statistics library.
             var clusters = ss.ckmeans(values, 5);
 
+            create a variable called breaks that is a list of the clusters
             var breaks = clusters.map(function (cluster) {
                 return [cluster[0], cluster.pop()];
             });
@@ -264,6 +336,23 @@
             } else if (d <= breaks[4][1]) {
                 return '#045a8d'
             }
+        }
+
+        function drawLegend() {
+
+            var legend = L.control({
+                position: 'topleft'
+            });
+
+            legend.onAdd = function () {
+
+                var div = L.DomUtil.create('div', 'legend');
+
+                return div;
+
+            };
+
+            legend.addTo(map);
         }
     </script>
 
