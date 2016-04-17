@@ -6,10 +6,11 @@
     <title>Lab 02 Starter</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 
+<!--    pull script sources for jquery, leaflet, and simple statistics libraries as well as leaflet stylesheet and google fonts-->
     <script src="https://code.jquery.com/jquery-1.12.2.min.js"></script>
     <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/simple-statistics/1.0.1/simple_statistics.js"></script>
-
+    
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
     <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
 
@@ -56,6 +57,7 @@
             color: #001323;
         }
         
+/*        define basic properties of legend element*/
         .legend {
             padding: 6px 8px;
             font-size: 1em;
@@ -64,6 +66,7 @@
             border-radius: 5px;
         }
         
+/*        define font size, weight, color and margin for the legend header*/
         .legend h3 {
             font-size: 1.1em;
             font-weight: normal;
@@ -71,6 +74,7 @@
             margin: 0 0 10px 0;
         }
         
+/*        give each span element some width and heigh and float on the left side so that the labels show up next to them*/
         .legend span {
             width: 20px;
             height: 20px;
@@ -78,10 +82,12 @@
             margin: 0 10px 4px 0;
         }
         
+/*        give a font size to the legend label*/
         .legend label {
             font-size: 1.1em;
         }
         
+/*        after each label element clear the float property so that the next span element will not float next to it*/
         .legend label:after {
             content: '';
             display: block;
@@ -104,7 +110,7 @@
         .leaflet-popup-content {
             max-width: 160px;
         }
-        /*        Adding margin to our UI control menu*/
+        /*        Add a margin to our UI control menu*/
         
         #ui-controls {
             margin-left: 10%;
@@ -128,6 +134,7 @@
     <!--    Adding a div called ui-controls that creates an HTML menu list of options.-->
     <div id='ui-controls'>
         <label>Choose a data attribute:</label>
+<!--        create a select menu called "occupied"-->
         <select id="occupied">
             <!--            The selected boolean below indicates which is the default value-->
             <option value="OWNED_MORT" selected>owned with mortgage</option>
@@ -202,54 +209,66 @@
         });
 
 
+//        define the drawMap function which gets the class breaks, sets the style for each layer, adds the popup to the layer, and finally updates the map legend
         function drawMap() {
 
+//            assign the breaks variable as the output value of the getClassBreaks function
             var breaks = getClassBreaks();
 
-
+//            run this function on each layer in the map to set the style and popup content
             dataLayer.eachLayer(function (layer) {
 
+//                simplify the layer.feature.properties into a single variable called props
                 var props = layer.feature.properties;
-
+                
+//                set the style of the layer by feeding the percentage value of the layer into the getColor function
                 layer.setStyle({
                     fillColor: getColor(props[attribute] /
                         props[norm], breaks)
                 });
+                
+//                add a popup to each layer based on the the properties of the county that is automatically updated based on the currently selected attribute variable
                 layer.bindPopup("<b>" + props["NAME"] + " County</b></br>" +
                     labels[attribute] + ": " +
                     ((props[attribute] / props[norm]) * 100).toLocaleString() + "%");
             });
-
+            
+//            run the update legend function feeding in the breaks values
             updateLegend(breaks);
 
         }
 
+//        define the drawInfo function, which creates a control element called info and adds it to the map. This is originally hidden until teh updateInfo is called on it.
         function drawInfo() {
             var info = L.control({
                 position: 'topright'
             });
 
+//            create an HTML div element in the info class
             info.onAdd = function (map) {
-
                 var div = L.DomUtil.create('div', 'info');
-
                 return div;
             }
-
+            
+//            add the info element to the map and hide it
             info.addTo(map);
             $(".info").hide();
         }
 
+//        define the updateInfo function which feeds in each layer property and generates a custom HTML box based on the current layer, this is run on a mouseover event in a different portion of the script.
         function updateInfo(layer) {
 
+//            create an abbreviated variable for the layer properties
             var props = layer.feature.properties;
 
+//            create an html object that displays all properties of the current layer. 
             var html = "<h3>" + props['NAME'] + " County</h3>" +
                 "total # occupied units: <b>" + props["OCCUPIED"] + "</b><br>" +
                 "# owned with mortgage or loan: <b>" + props["OWNED_MORT"] + "</b><br>" +
                 "# owned free and clear: <b>" + props["OWNED_FREE"] + "</b><br>" +
                 "# occupied by renters: <b>" + props["RENTER"] + "</b>"
 
+//            insert the html text from above into the .info element
             $(".info").html(html);
         }
 
@@ -264,23 +283,29 @@
         };
 
 
-
+//        define the updateLegend function which creates a legend element and populates the attribute label as the header, and adds the break values and colors 
         function updateLegend(breaks) {
 
+//            define the legend variable as the .legend element
             var legend = $('.legend');
 
+//            append the attribute label to the legend html
             legend.html("<h3>" + labels[attribute] + "</h3>");
 
+//            loop through the breaks values
             for (var i = 0; i < breaks.length; i++) {
-
+                
+//                use the getColor function on each of the breaks value to pick the color
                 var color = getColor(breaks[i][0], breaks);
 
+//                append a span element to the legend for each class break and update the color of the element to be based on the appropriate color for the class break that was picked by the getColor function, then populate the percentage value for that element by displaying both of the numbers in the array (stylized by multiplying times 100 and changing to a string).
                 legend.append(
                     '<span style="background:' + color + '"></span> ' +
                     '<label>' + (breaks[i][0] * 100).toLocaleString() + ' &mdash; ' +
                     (breaks[i][1] * 100).toLocaleString() + '</label>');
 
             }
+            
         }
 
 //        the getClassBreaks function creates a list of values showing the percentages for each layer, and then runs the ckmeans method to determine clusters, returning an array showing the minimum and maximum value of each cluster as a breaks variable.
@@ -314,17 +339,19 @@
 //            use the ss.ckmeans method to group the list of values into 5 categories (similar to natural breaks). the ckmeans function comes from the simple statistics library.
             var clusters = ss.ckmeans(values, 5);
 
-            create a variable called breaks that is a list of the clusters
+//            create a variable called breaks that is a list of arrays containing the lowest and highest value in each cluster.
             var breaks = clusters.map(function (cluster) {
                 return [cluster[0], cluster.pop()];
             });
-
+            
+//            return the completed breaks variable as populated above so it can be fed into other functions
             return breaks;
-
         }
 
+//        the get color function uses the breaks variable to get colors for each layer based on the values
         function getColor(d, breaks) {
-
+            
+//            use the input value of the current layer and return a specific color if it falls within the range of each breaks value. The if statement is structured in a way that first looks for values lower than the highest value of the first array, then looks for values lower than the highest value of the second array, etc...
             if (d <= breaks[0][1]) {
                 return '#f1eef6';
             } else if (d <= breaks[1][1]) {
@@ -338,22 +365,28 @@
             }
         }
 
+        
+//        define the drawLegend function. this creates the legend as a div in the DOM, gives it a position and adds it to the map element
         function drawLegend() {
 
+//            define the legend as a control object and give it a position at the topleft of the map
             var legend = L.control({
                 position: 'topleft'
             });
 
+//            give the legend an onAdd function that creates a div element
             legend.onAdd = function () {
 
+//                create a div element called div within the legend class.
                 var div = L.DomUtil.create('div', 'legend');
 
                 return div;
 
             };
-
+//          add the legend to the map
             legend.addTo(map);
         }
+        
     </script>
 
 </body>
