@@ -134,12 +134,12 @@
     <!--    Adding a div called ui-controls that creates an HTML menu list of options.-->
     <div id='ui-controls'>
         <label>Choose a data attribute:</label>
-<!--        create a select menu called "occupied"-->
-        <select id="occupied">
+<!--        create a select menu called "vacant"-->
+        <select id="vacant">
             <!--            The selected boolean below indicates which is the default value-->
-            <option value="OWNED_MORT" selected>owned with mortgage</option>
-            <option value="OWNED_FREE">owned free and clear</option>
-            <option value="RENTER">rented</option>
+            <option value="VACANT_FOR" selected>vacant units for rent</option>
+            <option value="VACANT_REN">vacant units, rented not occupied</option>
+            <option value="VACANT_SEA"> vacant units, used seasonally or for recreational use only </option>
         </select>
     </div>
 
@@ -156,10 +156,10 @@
         
 //        creating labels that relate to attribute properties. These will be input into the legend and options box to improve legibility
         var labels = {
-            "OCCUPIED": "occupied units",
-            "OWNED_MORT": "% occupied housing units owned with mortgage",
-            "OWNED_FREE": "% occupied housing units owned free and clear",
-            "RENTER": "% occupied housing units rented"
+            "VACANT": "vacant units",
+            "VACANT_FOR": "% vacant units for rent",
+            "VACANT_REN": "% vacant units, rented not occupied",
+            "VACANT_SEA": "% vacant units, used seasonally or for recreational use only"
         }
         
 //        declare the options that will define the map and be passed to the L.map function
@@ -175,10 +175,10 @@
 //        create a map using leaflet and pass it the options above
         var map = L.map('map', options);
 
-//        create global variables for the dataLayer, attribute, and norm (the attribute will be changed later but the default is OWNED_MORT)
+//        create global variables for the dataLayer, attribute, and norm (the attribute will be changed later but the default is VACANT_FOR)
         var dataLayer
-            , attribute = "OWNED_MORT"
-            , norm = "OCCUPIED";
+            , attribute = "VACANT_FOR"
+            , norm = "VACANT";
 
         //        Use jQuery to load the JSON file into the map
         $.getJSON("ky_counties_housing.json", function (data) {
@@ -230,7 +230,7 @@
 //                add a popup to each layer based on the the properties of the county that is automatically updated based on the currently selected attribute variable
                 layer.bindPopup("<b>" + props["NAME"] + " County</b></br>" +
                     labels[attribute] + ": " +
-                    ((props[attribute] / props[norm]) * 100).toLocaleString() + "%");
+                    ((props[attribute] / props[norm]) * 100).toLocaleString());
             });
             
 //            run the update legend function feeding in the breaks values
@@ -263,10 +263,10 @@
 
 //            create an html object that displays all properties of the current layer. 
             var html = "<h3>" + props['NAME'] + " County</h3>" +
-                "total # occupied units: <b>" + props["OCCUPIED"] + "</b><br>" +
-                "# owned with mortgage or loan: <b>" + props["OWNED_MORT"] + "</b><br>" +
-                "# owned free and clear: <b>" + props["OWNED_FREE"] + "</b><br>" +
-                "# occupied by renters: <b>" + props["RENTER"] + "</b>"
+                "total # vacant units: <b>" + props["VACANT"] + "</b><br>" +
+                "# vacant units for rent: <b>" + props["VACANT_FOR"] + "</b><br>" +
+                "# vacant units, rented not occupied: <b>" + props["VACANT_REN"] + "</b><br>" +
+                "# vacant units, used seasonally or for recreational use only: <b>" + props["VACANT_SEA"] + "</b>"
 
 //            insert the html text from above into the .info element
             $(".info").html(html);
@@ -274,7 +274,7 @@
 
         //        this function selects the element and then runs an event handles when the user changes the select portion of the element
         function buildUI() {
-            $('select[id="occupied"]').change(function () {
+            $('select[id="vacant"]').change(function () {
                 //                the term 'this' refers to the context of the event. val() refers to the attribute value of the option. the $ sign must be inserted to use the jquery functionality.
                 console.log($(this).val());
                 attribute = $(this).val();
@@ -323,17 +323,35 @@
                 //                add a mouseover event for each layer that calls the updateInfo function passing the current mouseover layer ('this') on to the function. The updateInfo function creates a popup based on what variable is currently selected.
                 layer.on('mouseover', function () {
                     updateInfo(this);
+                    
+//                    set the style on mouseover to show a yellow outline
+                    this.setStyle({
+                        color: 'yellow'
+                        , weight: 3
+                        , opacity: 0.9
+                })
+
                 });
+                
+//                set the style on mouseout back to a grey outline
+                layer.on('mouseout', function () {
+                    this.setStyle({
+                        color: '#dddddd'
+                        , weight: 2
+                    })
+                })
             });
             
 //            show the dataLayer info on mouseover. The jQuery command $(".info") is used to select the info element
             dataLayer.on('mouseover', function () {
                 $(".info").show();
+                
             });
 
             //            hide the dataLayer info on mouseout. this will ensure that the info popup is hidden by default unless you are hovering over a layer. 
             dataLayer.on('mouseout', function () {
                 $(".info").hide();
+                
             });
 
 //            use the ss.ckmeans method to group the list of values into 5 categories (similar to natural breaks). the ckmeans function comes from the simple statistics library.
