@@ -10,6 +10,8 @@
     <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/simple-statistics/1.0.0/simple_statistics.min.js"></script>
 
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.1.2/papaparse.min.js"></script>
+
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
     <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
 
@@ -21,71 +23,101 @@
             font-family: Lato, sans-serif;
             color: #0D0000;
         }
+        
         header {
             padding: 6px 10%;
         }
+        
         h1 {
+            position: absolute;
+            z-index: 100;
+            top: 10px;
+            left: 60px;
             padding: 8px 15px;
-            margin: 0; 
+            margin: 0;
+            color: whitesmoke;
+            font-size: 1.5em;
+            background: rgba(25, 25, 25, 0.8);
+            border-radius: 5px;
         }
+        
         #map {
             position: absolute;
             width: 100%;
             top: 0;
             bottom: 0;
         }
+        
         footer {
             padding: 6px 10%;
             width: 80%;
         }
+        
         p {
             font-size: 1em;
             color: #001323;
-        }   
+        }
     </style>
 </head>
 
 <body>
     <h1>Map Title Goes Here</h1>
     <div id='map'></div>
-    
+
     <script>
-        
-         // instantiate the Leaflet map
+        // instantiate the Leaflet map
         var options = {
-            center: [38.2, -94],
-            zoom: 4,
-            minZoom: 4,
-            maxZoom: 6,
-            dragging: true,
-            zoomControl: true
+            center: [38.2, -94]
+            , zoom: 4
+            , minZoom: 4
+            , maxZoom: 6
+            , dragging: true
+            , zoomControl: true
         }
         var map = L.map('map', options);
-        
+
         // load map tiles and add to map
-                
+
+        var CartoDB_DarkMatter = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
+            , subdomains: 'abcd'
+            , maxZoom: 19
+        }).addTo(map);
+
+
         // declare global variables
 
         // AJAX requests to load data files
- 
+        
+        $.getJSON("us-states.json", function(states) {
+
+            // states is accessible here
+        console.log(states);
+
+        });
+        
+        .fail(function() {
+            // the data file failed to load
+            console.log("Ruh roh! An error has occurred." );
+        });
+
         // function to process/bind data
 
         // function to draw the map
-        
+
         // function to update the map
-        
+
         // function get the class breaks   
-        
+
         // function to get the color value
-                
+
         // function to draw the legend
-        
+
         // function to update the legend
 
         // function to create the range slider
-
     </script>
-    
+
 </body>
 
 </html>

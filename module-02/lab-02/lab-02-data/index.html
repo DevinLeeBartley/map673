@@ -15,6 +15,7 @@
     <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
 
     <style>
+/*        define style for basic map elements*/
         body {
             margin: 0;
             padding: 0;
@@ -57,7 +58,7 @@
             color: #001323;
         }
         
-/*        define basic properties of legend element*/
+/*        define style properties of legend element*/
         .legend {
             padding: 6px 8px;
             font-size: 1em;
@@ -74,7 +75,7 @@
             margin: 0 0 10px 0;
         }
         
-/*        give each span element some width and heigh and float on the left side so that the labels show up next to them*/
+/*        give each span element some width and height and float on the left side so that the labels show up next to them*/
         .legend span {
             width: 20px;
             height: 20px;
@@ -94,6 +95,7 @@
             clear: both;
         }
         
+/*        give a style to the info element*/
         .info {
             padding: 6px 8px;
             font-size: 1em;
@@ -107,16 +109,17 @@
             margin: 0;
         }
         
+/*        set max width for leaflet popups*/
         .leaflet-popup-content {
             max-width: 160px;
         }
-        /*        Add a margin to our UI control menu*/
         
+        /*        Add a margin to our UI control menu*/
         #ui-controls {
             margin-left: 10%;
         }
-        /*        addiing font size and margin to ui control buttons, this is specific to labels with the parent of ui-controls*/
         
+        /*        add font size and margin to ui control buttons, this is specific to labels with the parent of ui-controls*/
         #ui-controls label {
             font-size: 1em;
             margin-right: 5px;
@@ -126,17 +129,18 @@
 
 <body>
     <header>
-        <h1>Map Title</h1>
-        <h2>Map Subtitle</h2>
+        <h1>Vacancy in Kentucky's Housing Market:</h1>
+        <h2>An interactive map</h2>
     </header>
 
 
     <!--    Adding a div called ui-controls that creates an HTML menu list of options.-->
     <div id='ui-controls'>
         <label>Choose a data attribute:</label>
-<!--        create a select menu called "vacant"-->
+<!--        create a select menu with the id of "vacant"-->
         <select id="vacant">
             <!--            The selected boolean below indicates which is the default value-->
+<!--            the option values are the value that will be passed to the other portions of the script, the text within the tags is what will show up on the select menu-->
             <option value="VACANT_FOR" selected>vacant units for rent</option>
             <option value="VACANT_REN">vacant units, rented not occupied</option>
             <option value="VACANT_SEA"> vacant units, used seasonally or for recreational use only </option>
@@ -146,15 +150,14 @@
     <div id='map'></div>
 
     <footer>
-        <p>Map authored by YOUR NAME</p>
-        <p>Additional information about the data and map goes here.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis urna magna, maximus nec laoreet sit amet, dictum ultricies nibh. Ut id auctor lacus. Nam a dolor et justo luctus luctus. Duis a elit eget risus dictum vehicula id eu elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed sed enim nisl. Vestibulum commodo imperdiet lacus, sed facilisis erat placerat sit amet. Nulla consequat malesuada neque eget aliquet. Integer non convallis nisl, gravida ultrices ex. Fusce nec vestibulum elit. Sed elementum lectus ipsum, vulputate elementum ex laoreet a. Aenean eu ex varius, varius felis vitae, efficitur nulla. Quisque pretium laoreet ante, in sodales dui vehicula at. Mauris eu sem sapien.
+        <p>Map authored by Devin Bartley</p>
+        <p>This map shows a variety of vacancy statistics by County in Kentucky. All statistics are shown as a percentage of the total number of vacant homes. Choose the variable you want to map from the drop down menu, or mouse over a county for more detailed information.
         </p>
     </footer>
 
     <script>
         
-//        creating labels that relate to attribute properties. These will be input into the legend and options box to improve legibility
+//        create labels that relate to attribute properties. These will be input into the legend and options box to improve legibility
         var labels = {
             "VACANT": "vacant units",
             "VACANT_FOR": "% vacant units for rent",
@@ -182,7 +185,7 @@
 
         //        Use jQuery to load the JSON file into the map
         $.getJSON("ky_counties_housing.json", function (data) {
-            //Use leaflet to turn the json file into a geoJson layer with a particular style
+            //Use leaflet to turn the JSON file into a geoJson layer with particular style properties
             dataLayer = L.geoJson(data, {
                 style: function (feature) {
                     return {
@@ -218,10 +221,10 @@
 //            run this function on each layer in the map to set the style and popup content
             dataLayer.eachLayer(function (layer) {
 
-//                simplify the layer.feature.properties into a single variable called props
+//                simplify the current layer.feature.properties into a single variable called props
                 var props = layer.feature.properties;
                 
-//                set the style of the layer by feeding the percentage value of the layer into the getColor function
+//                set the style of the layer by feeding the percentage value of the layer attribute variable divided by the Norm (total number of vacant units) into the getColor function
                 layer.setStyle({
                     fillColor: getColor(props[attribute] /
                         props[norm], breaks)
@@ -233,13 +236,15 @@
                     ((props[attribute] / props[norm]) * 100).toLocaleString());
             });
             
-//            run the update legend function feeding in the breaks values
+//            run the update legend function, feeding in the breaks values
             updateLegend(breaks);
 
         }
 
-//        define the drawInfo function, which creates a control element called info and adds it to the map. This is originally hidden until teh updateInfo is called on it.
+//        define the drawInfo function, which creates a control element called info and adds it to the map. This is originally hidden until the updateInfo function is called on it
         function drawInfo() {
+            
+//            establish the info box as a leaflet control object, and position it in the top right.
             var info = L.control({
                 position: 'topright'
             });
@@ -277,6 +282,7 @@
             $('select[id="vacant"]').change(function () {
                 //                the term 'this' refers to the context of the event. val() refers to the attribute value of the option. the $ sign must be inserted to use the jquery functionality.
                 console.log($(this).val());
+//                assign the currently selected value to "attribute"
                 attribute = $(this).val();
                 drawMap();
             });
