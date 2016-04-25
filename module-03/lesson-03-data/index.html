@@ -10,18 +10,20 @@
     <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/simple-statistics/1.0.0/simple_statistics.min.js"></script>
 
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.1.2/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.1.2/papaparse.min.js"></script>
 
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
     <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Vidaloka' rel='stylesheet' type='text/css'>
 
     <style>
         body {
             margin: 0;
             padding: 0;
             background: whitesmoke;
-            font-family: Lato, sans-serif;
+            font-family: Vitaloka, sans-serif;
             color: #0D0000;
+            font-size:
         }
         
         header {
@@ -65,7 +67,15 @@
     <div id='map'></div>
 
     <script>
+        var labels = {
+            "VACANT": "vacant units",
+            "VACANT_FOR": "% vacant units for rent",
+            "VACANT_REN": "% vacant units, rented not occupied",
+            "VACANT_SEA": "% vacant units, used seasonally or for recreational use only"
+        }
+        
         // instantiate the Leaflet map
+        
         var options = {
             center: [38.2, -94]
             , zoom: 4
@@ -87,33 +97,220 @@
 
         // declare global variables
 
+        var dataLayer
+            , attribute = "2001"
+            , norm = "VACANT";
+
         // AJAX requests to load data files
-        
-        $.getJSON("us-states.json", function(states) {
 
-            // states is accessible here
-        console.log(states);
+//        $.getJSON("us-states.json", function (data) {
+//
+//            // states is accessible here
+//            //            console.log(states);
+//
+//
+//
+//        })
 
-        });
+
+
+        $.getJSON("us-states.json", function (states) {
+
+            Papa.parse('states-unemployment.csv', {
+
+                download: true
+                , header: true
+                , complete: function (data) {
+
+                    //                    pass the states and data files to a function
+                    processData(states, data);
+
+                    // data is accessible to us here
+                    //                    console.log(data);
+
+                    // note that states is also accessible here!
+                    //                    console.log(states);
+
+                }
+            }); // end of Papa.parse() 
+            
+            
+
+            dataLayer = L.geoJson(states, {
+                style: function (feature) {
+                    return {
+                        color: '#dddddd'
+                        , weight: 2
+                        , fillOpacity: 1
+                        , fillColor: '#1f78b4'
+                    };
+                }
+            }).addTo(map);
+            
+            drawLegend();
         
-        .fail(function() {
-            // the data file failed to load
-            console.log("Ruh roh! An error has occurred." );
-        });
+            drawMap();
+
+        }); // end of $.getJSON()
+        
 
         // function to process/bind data
+        
+        
+
+        function processData(states, data) {
+//            console.log(states, data);
+            for (var state in states.features) {
+
+                var props = states.features[state].properties;
+                
+//                console.log(props);
+
+                for (var d in data.data) {
+                    if (props.STATEFP == data.data[d].STATE_FIP) {
+                        states.features[state].properties = data.data[d];
+                        break;
+                    }
+
+                } // inner loop complete
+                
+            } // outer loop complete
+            
+
+        }
+        
+        
+        
 
         // function to draw the map
 
+        function drawMap() {
+
+
+            var breaks = getClassBreaks();
+            
+            
+
+            dataLayer.eachLayer(function (layer) {
+                
+                var props = layer.feature.properties;
+
+                console.log(layer.feature);
+                
+//                why does the log below give me totally different data than the log above?
+                
+                console.log(layer.feature.properties);
+                
+                
+
+
+//                layer.setStyle({
+//                    fillColor: getColor(props[attribute], breaks)
+//                });
+
+
+//                layer.bindPopup("<b>" + props["NAME"] + " County</b></br>" +
+//                    labels[attribute] + ": " +
+//                    ((props[attribute] / props[norm]) * 100).toLocaleString());
+            });
+
+            updateLegend(breaks);
+
+        }
+
         // function to update the map
 
+
+
         // function get the class breaks   
+        function getClassBreaks() {
+
+            var values = [];
+
+            dataLayer.eachLayer(function (layer) {
+                var value = layer.feature;
+//                console.log(value);
+
+                values.push(value);
+
+            });
+
+            dataLayer.on('mouseover', function () {
+                $(".info").show();
+
+            });
+
+            dataLayer.on('mouseout', function () {
+                $(".info").hide();
+
+            });
+
+            var breaks = ss.quantile(values, [0, 0.2, 0.4, 0.6, 0.8, 1]);
+
+            return breaks;
+            
+            console.log("hello!");
+        }
+
 
         // function to get the color value
 
+        function getColor(d, breaks) {
+
+            //            use the input value of the current layer and return a specific color if it falls within the range of each breaks value. The if statement is structured in a way that first looks for values lower than the highest value of the first array, then looks for values lower than the highest value of the second array, etc...
+            if (d <= breaks[0][1]) {
+                return '#f1eef6';
+            } else if (d <= breaks[1][1]) {
+                return '#bdc9e1';
+            } else if (d <= breaks[2][1]) {
+                return '#74a9cf';
+            } else if (d <= breaks[3][1]) {
+                return '#2b8cbe'
+            } else if (d <= breaks[4][1]) {
+                return '#045a8d'
+            }
+        }
+
         // function to draw the legend
 
-        // function to update the legend
+        function drawLegend() {
+
+            var legend = L.control({
+                position: 'topleft'
+            });
+
+            legend.onAdd = function () {
+
+                var div = L.DomUtil.create('div', 'legend');
+
+                return div;
+
+            };
+
+            legend.addTo(map);
+        }
+
+        function updateLegend(breaks) {
+
+            var legend = $('.legend');
+
+            legend.html("<h3>" + labels[attribute] + "</h3>");
+
+
+            for (var i = 0; i < breaks.length; i++) {
+
+
+                var color = getColor(breaks[i][0], breaks);
+
+
+                legend.append(
+                    '<span style="background:' + color + '"></span> ' +
+                    '<label>' + (breaks[i][0] * 100).toLocaleString() + ' &mdash; ' +
+                    (breaks[i][1] * 100).toLocaleString() + '</label>');
+
+            }
+
+        }
 
         // function to create the range slider
     </script>
