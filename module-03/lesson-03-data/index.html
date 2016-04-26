@@ -59,6 +59,43 @@
             font-size: 1em;
             color: #001323;
         }
+        
+        .legend {
+            padding: 6px 8px;
+            font-size: 1em;
+            background: rgba(75, 75, 75, 0.8);
+            color: whitesmoke;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            width: 160px;
+        }
+        
+        .legend h3 {
+            font-size: 1.1em;
+            font-weight: bold;
+            line-height: 1em;
+            color: whitesmoke;
+            margin: 0;
+        }
+        
+        .legend li {
+            list-style-type: none;
+            height: 22px;
+        }
+        
+        .legend span {
+            width: 40px;
+            height: 20px;
+            float: left;
+/*            margin-right: 10px;*/
+            margin: 0 10px 4px 0;
+        }
+        
+        .legend label:after {
+            content: '';
+            display: block;
+            clear: both;
+        }
     </style>
 </head>
 
@@ -68,14 +105,14 @@
 
     <script>
         var labels = {
-            "VACANT": "vacant units",
-            "VACANT_FOR": "% vacant units for rent",
-            "VACANT_REN": "% vacant units, rented not occupied",
-            "VACANT_SEA": "% vacant units, used seasonally or for recreational use only"
+            "VACANT": "vacant units"
+            , "VACANT_FOR": "% vacant units for rent"
+            , "VACANT_REN": "% vacant units, rented not occupied"
+            , "VACANT_SEA": "% vacant units, used seasonally or for recreational use only"
         }
-        
+
         // instantiate the Leaflet map
-        
+
         var options = {
             center: [38.2, -94]
             , zoom: 4
@@ -102,14 +139,14 @@
 
         // AJAX requests to load data files
 
-//        $.getJSON("us-states.json", function (data) {
-//
-//            // states is accessible here
-//            //            console.log(states);
-//
-//
-//
-//        })
+        //        $.getJSON("us-states.json", function (data) {
+        //
+        //            // states is accessible here
+        //            //            console.log(states);
+        //
+        //
+        //
+        //        })
 
 
 
@@ -132,22 +169,22 @@
 
                 }
             }); // end of Papa.parse() 
-            
+
 
         }); // end of $.getJSON()
-        
+
 
         // function to process/bind data
-        
-        
+
+
 
         function processData(states, data) {
-//            console.log(states, data);
+            //            console.log(states, data);
             for (var state in states.features) {
 
                 var props = states.features[state].properties;
-                
-//                console.log(props);
+
+                //                console.log(props);
 
                 for (var d in data.data) {
                     if (props.STATEFP == data.data[d].STATE_FIP) {
@@ -156,20 +193,20 @@
                     }
 
                 } // inner loop complete
-                
+
             } // outer loop complete
-            
+
             drawLegend();
-        
+
             drawMap(states);
 
         }
-        
+
 
         // function to draw the map
 
         function drawMap(states) {
-            
+
             dataLayer = L.geoJson(states, {
                 style: function (feature) {
                     return {
@@ -180,32 +217,32 @@
                     };
                 }
             }).addTo(map);
-            
-//            console.log(dataLayer);
-            
+
+            //            console.log(dataLayer);
+
             var breaks = getClassBreaks();
 
             dataLayer.eachLayer(function (layer) {
-                
+
                 var props = layer.feature.properties;
-                
+
                 console.log(props[attribute], breaks);
-//                console.log(layer.feature);
-                
+                //                console.log(layer.feature);
+
                 layer.setStyle({
                     fillColor: getColor(props[attribute], breaks)
                 });
 
 
-//                layer.bindPopup("<b>" + props["NAME"] + " County</b></br>" +
-//                    labels[attribute] + ": " +
-//                    ((props[attribute] / props[norm]) * 100).toLocaleString());
+                //                layer.bindPopup("<b>" + props["NAME"] + " County</b></br>" +
+                //                    labels[attribute] + ": " +
+                //                    ((props[attribute] / props[norm]) * 100).toLocaleString());
             });
-            
-            
-            
-//            console.log(breaks);
-            
+
+
+
+            //            console.log(breaks);
+
             updateLegend(breaks);
 
         }
@@ -225,7 +262,7 @@
                 values.push(value);
 
             });
-            
+
 
             dataLayer.on('mouseover', function () {
                 $(".info").show();
@@ -238,8 +275,8 @@
             });
 
             var breaks = ss.quantile(values, [0, 0.2, 0.4, 0.6, 0.8, 1.0]);
-//                var breaks = ck.means(values, 5);
-        
+            //                var breaks = ck.means(values, 5);
+
             return breaks;
 
         }
@@ -249,9 +286,11 @@
 
         function getColor(d, breaks) {
 
+            console.log(typeof breaks[5]);
+
             //            use the input value of the current layer and return a specific color if it falls within the range of each breaks value. The if statement is structured in a way that first looks for values lower than the highest value of the first array, then looks for values lower than the highest value of the second array, etc...
-            
-//            Note: the largest class isnt loading!! It should be dark blue in California and Oregon. Review all code structure.
+
+            //            Note: the largest class isnt loading!! It should be dark blue in California and Oregon. Review all code structure.
             if (d <= breaks[0]) {
                 return '#f1eef6';
             } else if (d <= breaks[1]) {
@@ -262,7 +301,7 @@
                 return '#2b8cbe'
             } else if (d <= breaks[4]) {
                 return '#045a8d'
-            } else if (d <= breaks[5]) {
+            } else if (d <= parseFloat(breaks[5])) {
                 return '#0000FF'
             }
         }
@@ -296,13 +335,13 @@
             for (var i = 0; i < breaks.length; i++) {
 
 
-                var color = getColor(breaks[i][0], breaks);
+                var color = getColor(breaks[i], breaks);
 
 
                 legend.append(
                     '<span style="background:' + color + '"></span> ' +
-                    '<label>' + (breaks[i] * 100).toLocaleString() + ' &mdash; ' +
-                    (breaks[i] * 100).toLocaleString() + '</label>');
+                    '<label>' + (breaks[i]).toLocaleString() + ' &mdash; ' +
+                    (breaks[i]).toLocaleString() + '</label>');
 
             }
 
