@@ -134,22 +134,6 @@
                 }
             }); // end of Papa.parse() 
             
-            
-
-            dataLayer = L.geoJson(states, {
-                style: function (feature) {
-                    return {
-                        color: '#dddddd'
-                        , weight: 2
-                        , fillOpacity: 1
-                        , fillColor: '#1f78b4'
-                    };
-                }
-            }).addTo(map);
-            
-            drawLegend();
-        
-            drawMap();
 
         }); // end of $.getJSON()
         
@@ -176,44 +160,52 @@
                 
             } // outer loop complete
             
+            drawLegend();
+        
+            drawMap(states);
 
         }
-        
-        
         
 
         // function to draw the map
 
-        function drawMap() {
-
-
+        function drawMap(states) {
+            
+            dataLayer = L.geoJson(states, {
+                style: function (feature) {
+                    return {
+                        color: '#dddddd'
+                        , weight: 2
+                        , fillOpacity: 1
+                        , fillColor: '#1f78b4'
+                    };
+                }
+            }).addTo(map);
+            
+//            console.log(dataLayer);
+            
             var breaks = getClassBreaks();
-            
-            
 
             dataLayer.eachLayer(function (layer) {
                 
                 var props = layer.feature.properties;
-
-                console.log(layer.feature);
                 
-//                why does the log below give me totally different data than the log above?
+                console.log(props);
                 
-                console.log(layer.feature.properties);
-                
-                
-
-
-//                layer.setStyle({
-//                    fillColor: getColor(props[attribute], breaks)
-//                });
+                layer.setStyle({
+                    fillColor: getColor(props[attribute], breaks)
+                });
 
 
 //                layer.bindPopup("<b>" + props["NAME"] + " County</b></br>" +
 //                    labels[attribute] + ": " +
 //                    ((props[attribute] / props[norm]) * 100).toLocaleString());
             });
-
+            
+            
+            
+//            console.log(breaks);
+            
             updateLegend(breaks);
 
         }
@@ -228,12 +220,13 @@
             var values = [];
 
             dataLayer.eachLayer(function (layer) {
-                var value = layer.feature;
-//                console.log(value);
+                var value = layer.feature.properties[attribute];
 
                 values.push(value);
 
             });
+            
+//            console.log(values);
 
             dataLayer.on('mouseover', function () {
                 $(".info").show();
@@ -245,29 +238,33 @@
 
             });
 
-            var breaks = ss.quantile(values, [0, 0.2, 0.4, 0.6, 0.8, 1]);
-
-            return breaks;
+            var breaks = ss.quantile(values, [0, 0.2, 0.4, 0.6, 0.8, 1.0]);
+//                var breaks = ck.means(values, 5);
             
-            console.log("hello!");
+            return breaks;
+
         }
 
 
         // function to get the color value
 
         function getColor(d, breaks) {
-
+            console.log(d, breaks[5])
             //            use the input value of the current layer and return a specific color if it falls within the range of each breaks value. The if statement is structured in a way that first looks for values lower than the highest value of the first array, then looks for values lower than the highest value of the second array, etc...
-            if (d <= breaks[0][1]) {
+            
+//            Note: the largest class isnt loading!! It should be dark blue in California and Oregon.
+            if (d <= breaks[0]) {
                 return '#f1eef6';
-            } else if (d <= breaks[1][1]) {
+            } else if (d <= breaks[1]) {
                 return '#bdc9e1';
-            } else if (d <= breaks[2][1]) {
+            } else if (d <= breaks[2]) {
                 return '#74a9cf';
-            } else if (d <= breaks[3][1]) {
+            } else if (d <= breaks[3]) {
                 return '#2b8cbe'
-            } else if (d <= breaks[4][1]) {
+            } else if (d <= breaks[4]) {
                 return '#045a8d'
+            } else if (d <= breaks[5]) {
+                return '#0000FF'
             }
         }
 
