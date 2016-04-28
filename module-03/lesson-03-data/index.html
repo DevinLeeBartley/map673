@@ -75,7 +75,7 @@
             font-weight: bold;
             line-height: 1em;
             color: whitesmoke;
-            margin: 0;
+            margin: 5px;
         }
         
         .legend li {
@@ -87,7 +87,7 @@
             width: 40px;
             height: 20px;
             float: left;
-/*            margin-right: 10px;*/
+            /*            margin-right: 10px;*/
             margin: 0 10px 4px 0;
         }
         
@@ -96,12 +96,49 @@
             display: block;
             clear: both;
         }
+        
+        #ui-controls {
+            width: 176px;
+            padding: 8px 15px 8px 15px;
+            background: rgba(75, 75, 75, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            color: whitesmoke;
+        }
+        
+        .year-slider {
+            width: 100%;
+        }
+        
+        #ui-controls .min {
+        float: left;   
+        }
+        
+        #ui-controls .max {
+        float: right;
+        }
+        
+        label {
+        font-size: 1.1em;
+        font-weight: bold;
+        }
+
+        
     </style>
 </head>
+    
+
 
 <body>
-    <h1>Map Title Goes Here</h1>
+    <h1>Unemployment Rate by State</h1>
     <div id='map'></div>
+    <div id="ui-controls">
+        <label><span class="min">2001</span><span class="max">2013</span>
+        <input type="range" min = "2001", max= "2013", 
+               value = "2001", step= "1", class="year-slider"></input>
+        </label>
+    </div>
+
 
     <script>
         var labels = {
@@ -139,17 +176,6 @@
 
         // AJAX requests to load data files
 
-        //        $.getJSON("us-states.json", function (data) {
-        //
-        //            // states is accessible here
-        //            //            console.log(states);
-        //
-        //
-        //
-        //        })
-
-
-
         $.getJSON("us-states.json", function (states) {
 
             Papa.parse('states-unemployment.csv', {
@@ -177,7 +203,6 @@
         // function to process/bind data
 
 
-
         function processData(states, data) {
             //            console.log(states, data);
             for (var state in states.features) {
@@ -199,6 +224,10 @@
             drawLegend();
 
             drawMap(states);
+            
+            updateMap(states);
+
+            createSliderUI();
 
         }
 
@@ -210,23 +239,26 @@
             dataLayer = L.geoJson(states, {
                 style: function (feature) {
                     return {
-                        color: '#800080'
-                        , weight: 2
+                        color: 'black'
+                        , weight: 1
                         , fillOpacity: 1
                         , fillColor: '#800080'
                     };
                 }
             }).addTo(map);
 
-            //            console.log(dataLayer);
-
+            
+        }
+        
+        function updateMap(states) {
+            
             var breaks = getClassBreaks();
 
             dataLayer.eachLayer(function (layer) {
 
                 var props = layer.feature.properties;
 
-                console.log(props[attribute], breaks);
+                //                console.log(props[attribute], breaks);
                 //                console.log(layer.feature);
 
                 layer.setStyle({
@@ -239,17 +271,11 @@
                 //                    ((props[attribute] / props[norm]) * 100).toLocaleString());
             });
 
-
-
-            //            console.log(breaks);
-
             updateLegend(breaks);
 
         }
 
         // function to update the map
-
-
 
         // function get the class breaks   
         function getClassBreaks() {
@@ -257,7 +283,8 @@
             var values = [];
 
             dataLayer.eachLayer(function (layer) {
-                var value = layer.feature.properties[attribute];
+                //                attributes are strings - convert to float
+                var value = parseFloat(layer.feature.properties[attribute]);
 
                 values.push(value);
 
@@ -274,8 +301,15 @@
 
             });
 
-            var breaks = ss.quantile(values, [0, 0.2, 0.4, 0.6, 0.8, 1.0]);
-            //                var breaks = ck.means(values, 5);
+            var clusters = ss.quantile(values, [0, 0.2, 0.4, 0.6, 0.8, 1.0]);
+            //            var clusters = ss.ckmeans(values, 6);
+
+            var breaks = [];
+
+            for (var i = 0; i < clusters.length - 1; i++) {
+                breaks.push([clusters[i], clusters[i + 1]])
+                console.log(breaks);
+            }
 
             return breaks;
 
@@ -286,23 +320,20 @@
 
         function getColor(d, breaks) {
 
-            console.log(typeof breaks[5]);
+            //            console.log(breaks);
 
-            //            use the input value of the current layer and return a specific color if it falls within the range of each breaks value. The if statement is structured in a way that first looks for values lower than the highest value of the first array, then looks for values lower than the highest value of the second array, etc...
+            //            use the input value of the current layer and return a specific color if it falls within the range of each breaks value.
 
-            //            Note: the largest class isnt loading!! It should be dark blue in California and Oregon. Review all code structure.
-            if (d <= breaks[0]) {
-                return '#f1eef6';
-            } else if (d <= breaks[1]) {
-                return '#bdc9e1';
-            } else if (d <= breaks[2]) {
-                return '#74a9cf';
-            } else if (d <= breaks[3]) {
-                return '#2b8cbe'
-            } else if (d <= breaks[4]) {
-                return '#045a8d'
-            } else if (d <= parseFloat(breaks[5])) {
-                return '#0000FF'
+            if (d <= breaks[0][1]) {
+                return '#edf8fb';
+            } else if (d <= breaks[1][1]) {
+                return '#b3cde3';
+            } else if (d <= breaks[2][1]) {
+                return '#8c96c6';
+            } else if (d <= breaks[3][1]) {
+                return '#8856a7'
+            } else if (d <= breaks[4][1]) {
+                return '#810f7c'
             }
         }
 
@@ -329,22 +360,59 @@
 
             var legend = $('.legend');
 
-            legend.html("<h3>" + labels[attribute] + "</h3>");
+            legend.html("<h3>" + "Unemployment Rate by State " + attribute + "</h3>");
 
 
             for (var i = 0; i < breaks.length; i++) {
 
 
-                var color = getColor(breaks[i], breaks);
+                var color = getColor(breaks[i][1], breaks);
 
 
                 legend.append(
                     '<span style="background:' + color + '"></span> ' +
-                    '<label>' + (breaks[i]).toLocaleString() + ' &mdash; ' +
-                    (breaks[i]).toLocaleString() + '</label>');
+                    '<label>' + (breaks[i][0]).toLocaleString() + ' &mdash; ' +
+                    (breaks[i][1]).toLocaleString() + '</label>');
 
             }
 
+        }
+
+        function createSliderUI() {
+            // create a Leaflet control object and store a reference to it in a variable
+            var sliderControl = L.control({
+                position: 'bottomleft'
+            });
+
+            // when we add this control object to the map
+            sliderControl.onAdd = function (map) {
+
+                // select an existing DOM element with an id of "ui-controls"
+                var slider = L.DomUtil.get("ui-controls");
+
+                // when the user clicks on the slider element
+                L.DomEvent.addListener(slider, 'mousedown', function (e) {
+
+                    // prevent the click event from bubbling up to the map
+                    L.DomEvent.stopPropagation(e);
+
+                });
+
+                // return the slider from the onAdd method
+                return slider;
+            }
+
+            // add the control object containing our slider element to the map
+            sliderControl.addTo(map);
+            
+            //select the form element
+            $(".year-slider")
+            .on("input change", function() {
+                console.log($(this).val());
+                
+                attribute = $(this).val();
+                updateMap();
+            })
         }
 
         // function to create the range slider

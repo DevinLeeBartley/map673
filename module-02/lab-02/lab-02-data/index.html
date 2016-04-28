@@ -375,7 +375,7 @@
 
 //        the get color function uses the breaks variable to get colors for each layer based on the values
         function getColor(d, breaks) {
-            console.log(breaks);
+            
 //            use the input value of the current layer and return a specific color if it falls within the range of each breaks value. The if statement is structured in a way that first looks for values lower than the highest value of the first array, then looks for values lower than the highest value of the second array, etc...
             if (d <= breaks[0][1]) {
                 return '#f1eef6';
