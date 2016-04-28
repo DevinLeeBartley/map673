@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset=utf-8 />
+    <title>Kentucky Unemployment Rates</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+    <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simple-statistics/1.0.0/simple_statistics.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.1.2/papaparse.min.js"></script>
+
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Vidaloka' rel='stylesheet' type='text/css'>
+
+    <style>
+        
+    </style>
+    </head>
+    
+<body>
+    <h1>Kentucky Unemployment Rate</h1>
+    <!--    Declare div map elements-->
+    <div id='map'></div>
+    <!--    Declare UI Controls Div element-->
+    <div id='ui-controls'>
+        <label>
+            <span class="min">2001</span><span class="max">2013</span>
+        </label>
+    </div>
+    <script>
+//    Create labels variable for map
+    var labels = {
+            "VACANT": "vacant units"
+            , "VACANT_FOR": "% vacant units for rent"
+            , "VACANT_REN": "% vacant units, rented not occupied"
+            , "VACANT_SEA": "% vacant units, used seasonally or for recreational use only"
+        }
+    
+        // instantiate the Leaflet map
+
+        var options = {
+            center: [38.2, -94]
+            , zoom: 4
+            , minZoom: 4
+            , maxZoom: 6
+            , dragging: true
+            , zoomControl: true
+        }
+        var map = L.map('map', options);
+        
+            // load map tiles and add to map
+        var CartoDB_DarkMatter = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
+            , subdomains: 'abcd'
+            , maxZoom: 19
+        }).addTo(map);
+        
+                // declare global variables
+
+        var dataLayer
+            , attribute = "2000"; // default attribute is 2000
+        
+                // AJAX requests to load data files
+
+        $.getJSON("ky-counties.json", function (counties) {
+
+            Papa.parse('ky-unemployment-data.csv', {
+
+                download: true
+                , header: true
+                , complete: function (data) {
+
+                    //                    pass the states and data files to a function
+                    processData(counties, data);
+
+                    // data is accessible to us here
+                    //                    console.log(data);
+
+                    // note that states is also accessible here!
+                    //                    console.log(states);
+
+                }
+            }); // end of Papa.parse() 
+
+
+        }); // end of $.getJSON()
+
+        // function to process/bind data
+
+
+        function processData(counties, data) {
+            //            console.log(states, data);
+            for (var county in counties.features) {
+
+                var props = counties.features[county].properties;
+
+                //                console.log(props);
+
+                for (var d in data.data) {
+                    if (props.COUNTY_FIP == data.data[d].CNTY) {
+                counties.features[county].properties = data.data[d];
+                        break;
+                    }
+
+                } // inner loop complete
+
+            } // outer loop complete
+            
+            console.log("end");
+            console.log(data);
+            console.log(counties);
+//
+            drawLegend();
+
+            drawMap(states);
+            
+            updateMap(states);
+
+            createSliderUI();
+
+        }
+
+        
+        
+    </script>
+
+
+</body>
