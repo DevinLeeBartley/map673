@@ -17,10 +17,119 @@
     <link href='https://fonts.googleapis.com/css?family=Vidaloka' rel='stylesheet' type='text/css'>
 
     <style>
+            body {
+            margin: 0;
+            padding: 0;
+            background: whitesmoke;
+            font-family: Vitaloka, sans-serif;
+            color: #0D0000;
+            font-size:
+        }
         
-    </style>
-    </head>
+        header {
+            padding: 6px 10%;
+        }
+        
+        h1 {
+            position: absolute;
+            z-index: 100;
+            top: 10px;
+            left: 60px;
+            padding: 8px 15px;
+            margin: 0;
+            color: whitesmoke;
+            font-size: 1.5em;
+            background: rgba(25, 25, 25, 0.8);
+            border-radius: 5px;
+        }
+        
+        #map {
+            position: absolute;
+            width: 100%;
+            top: 0;
+            bottom: 0;
+        }
+        
+        footer {
+            padding: 6px 10%;
+            width: 80%;
+        }
+        
+        p {
+            font-size: 1em;
+            color: #001323;
+        }
+        
+        .legend {
+            padding: 6px 8px;
+            font-size: 1em;
+            background: rgba(75, 75, 75, 0.8);
+            color: whitesmoke;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            width: 160px;
+        }
+        
+        .legend h3 {
+            font-size: 1.1em;
+            font-weight: bold;
+            line-height: 1em;
+            color: whitesmoke;
+            margin: 5px;
+        }
+        
+        .legend li {
+            list-style-type: none;
+            height: 22px;
+        }
+        
+        .legend span {
+            width: 40px;
+            height: 20px;
+            float: left;
+            /*            margin-right: 10px;*/
+            margin: 0 10px 4px 0;
+        }
+        
+        .legend label:after {
+            content: '';
+            display: block;
+            clear: both;
+        }
+        
+        #ui-controls {
+            width: 176px;
+            padding: 8px 15px 8px 15px;
+            background: rgba(75, 75, 75, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            color: whitesmoke;
+        }
+        
+        .year-slider {
+            width: 100%;
+        }
+        
+        #ui-controls .min {
+        float: left;   
+        }
+        
+        #ui-controls .max {
+        float: right;
+        }
+        
+        label {
+        font-size: 1.1em;
+        font-weight: bold;
+        }
+
+        
     
+    
+
+    </style>
+</head>
+
 <body>
     <h1>Kentucky Unemployment Rate</h1>
     <!--    Declare div map elements-->
@@ -28,43 +137,45 @@
     <!--    Declare UI Controls Div element-->
     <div id='ui-controls'>
         <label>
-            <span class="min">2001</span><span class="max">2013</span>
+            <span class="min">2000</span><span class="max">2013</span>
+            <input type="range" min = "2001", max= "2013", 
+               value = "2001", step= "1", class="year-slider"></input>
         </label>
     </div>
     <script>
-//    Create labels variable for map
-    var labels = {
+        //    Create labels variable for map
+        var labels = {
             "VACANT": "vacant units"
             , "VACANT_FOR": "% vacant units for rent"
             , "VACANT_REN": "% vacant units, rented not occupied"
             , "VACANT_SEA": "% vacant units, used seasonally or for recreational use only"
         }
-    
+
         // instantiate the Leaflet map
 
         var options = {
-            center: [38.2, -94]
-            , zoom: 4
-            , minZoom: 4
-            , maxZoom: 6
+            center: [37.6, -85.3]
+            , zoom: 7
+            , minZoom: 6
+            , maxZoom: 8
             , dragging: true
             , zoomControl: true
         }
         var map = L.map('map', options);
-        
-            // load map tiles and add to map
+
+        // load map tiles and add to map
         var CartoDB_DarkMatter = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
             , subdomains: 'abcd'
             , maxZoom: 19
         }).addTo(map);
-        
-                // declare global variables
+
+        // declare global variables
 
         var dataLayer
-            , attribute = "2000"; // default attribute is 2000
-        
-                // AJAX requests to load data files
+            , attribute = "2001"; // default attribute is 2000
+
+        // AJAX requests to load data files
 
         $.getJSON("ky-counties.json", function (counties) {
 
@@ -80,8 +191,8 @@
                     // data is accessible to us here
                     //                    console.log(data);
 
-                    // note that states is also accessible here!
-                    //                    console.log(states);
+                    // note that counties is also accessible here!
+                    //                    console.log(counties);
 
                 }
             }); // end of Papa.parse() 
@@ -93,7 +204,7 @@
 
 
         function processData(counties, data) {
-            //            console.log(states, data);
+            //            console.log(counties, data);
             for (var county in counties.features) {
 
                 var props = counties.features[county].properties;
@@ -102,30 +213,210 @@
 
                 for (var d in data.data) {
                     if (props.COUNTY_FIP == data.data[d].CNTY) {
-                counties.features[county].properties = data.data[d];
+                        counties.features[county].properties = data.data[d];
                         break;
                     }
 
                 } // inner loop complete
 
             } // outer loop complete
-            
+
             console.log("end");
             console.log(data);
             console.log(counties);
-//
+            //
             drawLegend();
 
-            drawMap(states);
-            
-            updateMap(states);
+            drawMap(counties);
+
+            updateMap(counties);
 
             createSliderUI();
 
         }
 
+        function drawMap(counties) {
+
+            dataLayer = L.geoJson(counties, {
+                style: function (feature) {
+                    return {
+                        color: 'black'
+                        , weight: 1
+                        , fillOpacity: 1
+                        , fillColor: '#800080'
+                    };
+                }
+            }).addTo(map);
+            
+            console.log("draw map");
+
+
+        }
+
+        function updateMap(counties) {
+
+            var breaks = getClassBreaks();
+
+            dataLayer.eachLayer(function (layer) {
+
+                var props = layer.feature.properties;
+
+                //                console.log(props[attribute], breaks);
+                //                console.log(layer.feature);
+
+                layer.setStyle({
+                    fillColor: getColor(props[attribute], breaks)
+                });
+
+
+                //                layer.bindPopup("<b>" + props["NAME"] + " County</b></br>" +
+                //                    labels[attribute] + ": " +
+                //                    ((props[attribute] / props[norm]) * 100).toLocaleString());
+            });
+
+            updateLegend(breaks);
+
+        }
+
+        function getClassBreaks() {
+
+            var values = [];
+
+            dataLayer.eachLayer(function (layer) {
+                //                attributes are strings - convert to float
+                var value = parseFloat(layer.feature.properties[attribute]);
+
+                values.push(value);
+
+            });
+
+
+            dataLayer.on('mouseover', function () {
+                $(".info").show();
+
+            });
+
+            dataLayer.on('mouseout', function () {
+                $(".info").hide();
+
+            });
+
+            var clusters = ss.quantile(values, [0, 0.2, 0.4, 0.6, 0.8, 1.0]);
+            //            var clusters = ss.ckmeans(values, 6);
+
+            var breaks = [];
+
+            for (var i = 0; i < clusters.length - 1; i++) {
+                breaks.push([clusters[i], clusters[i + 1]])
+                console.log(breaks);
+            }
+
+            return breaks;
+
+        }
         
-        
+               // function to get the color value
+
+        function getColor(d, breaks) {
+
+            //            console.log(breaks);
+
+            //            use the input value of the current layer and return a specific color if it falls within the range of each breaks value.
+
+            if (d <= breaks[0][1]) {
+                return '#edf8fb';
+            } else if (d <= breaks[1][1]) {
+                return '#b3cde3';
+            } else if (d <= breaks[2][1]) {
+                return '#8c96c6';
+            } else if (d <= breaks[3][1]) {
+                return '#8856a7'
+            } else if (d <= breaks[4][1]) {
+                return '#810f7c'
+            }
+        }
+
+        // function to draw the legend
+
+        function drawLegend() {
+
+            var legend = L.control({
+                position: 'topleft'
+            });
+
+            legend.onAdd = function () {
+
+                var div = L.DomUtil.create('div', 'legend');
+
+                return div;
+
+            };
+
+            legend.addTo(map);
+        }
+
+        function updateLegend(breaks) {
+
+            var legend = $('.legend');
+
+            legend.html("<h3>" + "Unemployment Rate by State " + attribute + "</h3>");
+
+
+            for (var i = 0; i < breaks.length; i++) {
+
+
+                var color = getColor(breaks[i][1], breaks);
+
+
+                legend.append(
+                    '<span style="background:' + color + '"></span> ' +
+                    '<label>' + (breaks[i][0]).toLocaleString() + ' &mdash; ' +
+                    (breaks[i][1]).toLocaleString() + '</label>');
+
+            }
+
+        }
+
+        function createSliderUI() {
+            // create a Leaflet control object and store a reference to it in a variable
+            var sliderControl = L.control({
+                position: 'bottomleft'
+            });
+
+            // when we add this control object to the map
+            sliderControl.onAdd = function (map) {
+                
+
+                // select an existing DOM element with an id of "ui-controls"
+                var slider = L.DomUtil.get("ui-controls");
+
+                // when the user clicks on the slider element
+                L.DomEvent.addListener(slider, 'mousedown', function (e) {
+
+                    // prevent the click event from bubbling up to the map
+                    L.DomEvent.stopPropagation(e);
+
+                });
+
+                // return the slider from the onAdd method
+                return slider;
+            }
+            
+
+
+            // add the control object containing our slider element to the map
+            sliderControl.addTo(map);
+            
+            //select the form element
+            $(".year-slider")
+            .on("input change", function() {
+                console.log($(this).val());
+                
+                attribute = $(this).val();
+                updateMap();
+            })
+        }
+
     </script>
 
 
