@@ -17,7 +17,7 @@
     <link href='https://fonts.googleapis.com/css?family=Vidaloka' rel='stylesheet' type='text/css'>
 
     <style>
-            body {
+        body {
             margin: 0;
             padding: 0;
             background: whitesmoke;
@@ -96,6 +96,25 @@
             display: block;
             clear: both;
         }
+        /*        give a style to the info element*/
+        
+        .info {
+            padding: 6px 8px;
+            font-size: 1em;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            text-align: right;
+        }
+        
+        .info h3 {
+            margin: 0;
+        }
+        /*        set max width for leaflet popups*/
+        
+        .leaflet-popup-content {
+            max-width: 160px;
+        }
         
         #ui-controls {
             width: 176px;
@@ -111,22 +130,17 @@
         }
         
         #ui-controls .min {
-        float: left;   
+            float: left;
         }
         
         #ui-controls .max {
-        float: right;
+            float: right;
         }
         
         label {
-        font-size: 1.1em;
-        font-weight: bold;
+            font-size: 1.1em;
+            font-weight: bold;
         }
-
-        
-    
-    
-
     </style>
 </head>
 
@@ -138,17 +152,16 @@
     <div id='ui-controls'>
         <label>
             <span class="min">2000</span><span class="max">2013</span>
-            <input type="range" min = "2001", max= "2013", 
-               value = "2001", step= "1", class="year-slider"></input>
+            <input type="range" min="2001" , max="2013" , value="2001" , step="1" , class="year-slider"></input>
         </label>
     </div>
     <script>
         //    Create labels variable for map
         var labels = {
-            "VACANT": "vacant units"
-            , "VACANT_FOR": "% vacant units for rent"
-            , "VACANT_REN": "% vacant units, rented not occupied"
-            , "VACANT_SEA": "% vacant units, used seasonally or for recreational use only"
+            "NAME": "County Name"
+            , "2001": "2001"
+            , "2002": "2002"
+            , "2003": "2003"
         }
 
         // instantiate the Leaflet map
@@ -233,6 +246,8 @@
 
             createSliderUI();
 
+            drawInfo();
+
         }
 
         function drawMap(counties) {
@@ -247,7 +262,7 @@
                     };
                 }
             }).addTo(map);
-            
+
             console.log("draw map");
 
 
@@ -288,18 +303,39 @@
 
                 values.push(value);
 
+                layer.on('mouseover', function () {
+                    updateInfo(this);
+
+                    //                    set the style on mouseover to show a yellow outline
+                    this.setStyle({
+                        color: 'yellow'
+                        , weight: 3
+                        , opacity: 0.9
+                    })
+
+                });
+
+                layer.on('mouseout', function () {
+                    this.setStyle({
+                        color: 'black'
+                        , weight: 1
+                        , fillOpacity: 1
+                    })
+                })
+
             });
 
 
-            dataLayer.on('mouseover', function () {
-                $(".info").show();
-
-            });
-
-            dataLayer.on('mouseout', function () {
-                $(".info").hide();
-
-            });
+            Note: Do I need the lines below(or do they do the same as the lines above ? ) Also move highlight to front!!!
+                //            dataLayer.on('mouseover', function () {
+                //                $(".info").show();
+                //
+                //            });
+                //
+                //            dataLayer.on('mouseout', function () {
+                //                $(".info").hide();
+                //
+                //            });
 
             var clusters = ss.quantile(values, [0, 0.2, 0.4, 0.6, 0.8, 1.0]);
             //            var clusters = ss.ckmeans(values, 6);
@@ -314,8 +350,8 @@
             return breaks;
 
         }
-        
-               // function to get the color value
+
+        // function to get the color value
 
         function getColor(d, breaks) {
 
@@ -359,7 +395,7 @@
 
             var legend = $('.legend');
 
-            legend.html("<h3>" + "Unemployment Rate by State " + attribute + "</h3>");
+            legend.html("<h3>" + "Unemployment Rate by County " + attribute + "</h3>");
 
 
             for (var i = 0; i < breaks.length; i++) {
@@ -377,6 +413,41 @@
 
         }
 
+        function drawInfo() {
+
+            //            establish the info box as a leaflet control object, and position it in the top right.
+            var info = L.control({
+                position: 'topright'
+            });
+
+            //            create an HTML div element in the info class
+            info.onAdd = function (map) {
+                var div = L.DomUtil.create('div', 'info');
+                return div;
+            }
+
+            //            add the info element to the map and hide it
+            info.addTo(map);
+            $(".info").hide();
+        }
+
+        function updateInfo(layer) {
+
+            //            create an abbreviated variable for the layer properties
+            var props = layer.feature.properties;
+
+            //            create an html object that displays all properties of the current layer. 
+            var html = "<h3>" + props['NAME'] + " County</h3>" +
+                "total # vacant units: <b>" + props["VACANT"] + "</b><br>" +
+                "# vacant units for rent: <b>" + props["VACANT_FOR"] + "</b><br>" +
+                "# vacant units, rented not occupied: <b>" + props["VACANT_REN"] + "</b><br>" +
+                "# vacant units, used seasonally or for recreational use only: <b>" + props["VACANT_SEA"] + "</b>"
+
+            //            insert the html text from above into the .info element
+            $(".info").html(html);
+        }
+
+
         function createSliderUI() {
             // create a Leaflet control object and store a reference to it in a variable
             var sliderControl = L.control({
@@ -385,7 +456,7 @@
 
             // when we add this control object to the map
             sliderControl.onAdd = function (map) {
-                
+
 
                 // select an existing DOM element with an id of "ui-controls"
                 var slider = L.DomUtil.get("ui-controls");
@@ -401,22 +472,21 @@
                 // return the slider from the onAdd method
                 return slider;
             }
-            
+
 
 
             // add the control object containing our slider element to the map
             sliderControl.addTo(map);
-            
+
             //select the form element
             $(".year-slider")
-            .on("input change", function() {
-                console.log($(this).val());
-                
-                attribute = $(this).val();
-                updateMap();
-            })
-        }
+                .on("input change", function () {
+                    console.log($(this).val());
 
+                    attribute = $(this).val();
+                    updateMap();
+                })
+        }
     </script>
 
 
