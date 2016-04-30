@@ -59,8 +59,8 @@
             font-size: 1em;
             color: #001323;
         }
-        /*        define the properties of the legend element*/
         
+        /*        define the properties of the legend element*/
         .legend {
             padding: 6px 8px;
             font-size: 1em;
@@ -70,8 +70,8 @@
             border-radius: 5px;
             width: 160px;
         }
-        /*        define font size, weight, color and margin for the legend header*/
         
+        /*        define font size, weight, color and margin for the legend header*/
         .legend h3 {
             font-size: 1.1em;
             font-weight: bold;
@@ -84,8 +84,8 @@
             list-style-type: none;
             height: 22px;
         }
-        /*        give each span element some width and height and float on the left side so that the labels show up next to them*/
         
+        /*        give each span element some width and height and float on the left side so that the labels show up next to them*/
         .legend span {
             width: 40px;
             height: 20px;
@@ -93,15 +93,15 @@
             /*            margin-right: 10px;*/
             margin: 0 10px 4px 0;
         }
-        /*        after each label element clear the float property so that the next span element will not float next to it*/
         
+        /*        after each label element clear the float property so that the next span element will not float next to it*/
         .legend label:after {
             content: '';
             display: block;
             clear: both;
         }
-        /*        give a style to the info element*/
         
+        /*        give a style to the info element*/
         .info {
             padding: 6px 8px;
             font-size: 1em;
@@ -114,13 +114,13 @@
         .info h3 {
             margin: 0;
         }
-        /*        set max width for leaflet popups*/
         
+        /*        set max width for leaflet popups*/
         .leaflet-popup-content {
             max-width: 180px;
         }
-        /*        add properties for the UI control menu*/
         
+        /*        add properties for the UI control menu*/   
         #ui-controls {
             width: 176px;
             padding: 8px 15px 8px 15px;
@@ -129,13 +129,13 @@
             border-radius: 5px;
             color: whitesmoke;
         }
-        /*        add the year-slider element*/
         
+        /*        add the year-slider element*/
         .year-slider {
             width: 100%;
         }
-        /*        set up the span position for the .min and .max class attributes that will be either end of the slider*/
         
+        /*set up the span position for the .min and .max class attributes that will be either end of the slider*/
         #ui-controls .min {
             float: left;
         }
@@ -143,8 +143,8 @@
         #ui-controls .max {
             float: right;
         }
-        /*        set up the font size and weight for the label*/
         
+        /*set up the font size and weight for the label*/
         label {
             font-size: 1.1em;
             font-weight: bold;
@@ -154,18 +154,19 @@
 
 <body>
     <h1>Kentucky Unemployment Rate 2000-2013</h1>
-    <!--    Declare div map elements-->
+    <!--Declare div map elements-->
     <div id='map'></div>
-    <!--    Declare UI Controls Div element-->
+    <!--Declare UI Controls Div element-->
     <div id='ui-controls'>
         <label>
-            <!--            create a span element, with an input type of range. Range creates a slider form widget in HTML The step value indicates how much the slider should advance on each step-->
+            <!--create a span element, with an input type of range. Range creates a slider form widget in HTML The step value indicates how much the slider should advance on each step-->
             <span class="min">2000</span><span class="max">2013</span>
             <input type="range" min="2000" , max="2013" , value="2000" , step="1" , class="year-slider"></input>
         </label>
     </div>
     <script>
-        //    Create labels variable for map with each label element that will be required.
+        
+        //create labels variable for map with each label element that will be required.
         var labels = {
             "NAME": "County Name"
             , "2000": "2000"
@@ -184,8 +185,7 @@
             , "2013": "2013"
         }
 
-        // instantiate the Leaflet map and set the zoom to automatically view Kentucky
-
+        //instantiate the Leaflet map and set the zoom to automatically view Kentucky
         var options = {
             center: [37.6, -85.3]
             , zoom: 7
@@ -212,37 +212,39 @@
 
         //        Use jQuery to load the JSON file into the map
         $.getJSON("ky-counties.json", function (counties) {
-            //        Use PapaParse to grab the unemployment csv spreadsheet and transfer it to JSON
-            Papa.parse('ky-unemployment-data.csv', {
 
+            //Use PapaParse to grab the unemployment csv spreadsheet and transfer it to JSON
+            Papa.parse('ky-unemployment-data.csv', {
                 download: true
                 , header: true
                 , complete: function (data) {
 
-                    //                    pass the counties and data files to a function
+                    //pass the counties and data files to a function
                     processData(counties, data);
 
                 }
-            }); // end of Papa.parse() 
 
+            }); // end of Papa.parse() 
 
         }); // end of $.getJSON()
 
         // function to process/bind data
 
-
         function processData(counties, data) {
-            //            loop through all the counties
+
+            //loop through all the counties
             for (var county in counties.features) {
+
                 //assign the props variable to shorten access to a county property
                 var props = counties.features[county].properties;
 
-                //                console.log(props);
-                //                loop through all the objects in the data file, if the county FIP code equals the data file FIP CNTY code, make the county properties match the data file
+                //loop through all the objects in the data file, if the county FIP code equals the data file FIP CNTY code, make the county properties match the data file
                 for (var d in data.data) {
+
                     if (props.COUNTY_FIP == data.data[d].CNTY) {
                         counties.features[county].properties = data.data[d];
                         break;
+
                     }
 
                 } // inner loop complete
@@ -263,7 +265,8 @@
         }
 
         function drawMap(counties) {
-            //            create a dataLayer from the counties file set the default properties
+
+            //create a dataLayer from the counties file set the default properties
             dataLayer = L.geoJson(counties, {
                 style: function (feature) {
                     return {
@@ -271,8 +274,11 @@
                         , weight: 1
                         , fillOpacity: 1
                         , fillColor: '#800080'
+
                     };
+
                 }
+
             }).addTo(map);
 
         }
@@ -285,80 +291,83 @@
 
                 var props = layer.feature.properties; // simplify accessing the properties
 
-                //                set the style of each layer to be based on what the getColor function returns
+                //set the style of each layer to be based on what the getColor function returns
                 layer.setStyle({
                     fillColor: getColor(props[attribute], breaks)
                 });
 
-                //                bind a popup to each layer that shows the county name and the currently selected attribute (which is the current years unemployment rate)
+                //bind a popup to each layer that shows the county name and the currently selected attribute (which is the current years unemployment rate)
                 layer.bindPopup("<b>" + props["NAME"] + " County</b></br>" + "Unemployment Rate in " + attribute + ": " +
                     props[attribute] + "%");
             });
 
-            //            update the legend and feed in the breaks value for the current year
+            // update the legend and feed in the breaks value for the current year
             updateLegend(breaks);
 
         }
 
         function getClassBreaks() {
 
-            var values = []; // declare an empty object for the values
+            var values = []; //declare an empty object for the values
 
             dataLayer.eachLayer(function (layer) {
-                //                declare the value layer to be the current unemployment rate. The attributes are natively in string format so the parseFloat commant will convert them to a float value
+
+                //declare the value layer to be the current unemployment rate. The attributes are natively in string format so the parseFloat commant will convert them to a float value
                 var value = parseFloat(layer.feature.properties[attribute]);
 
-                //                append each individual value to the values object
+                //append each individual value to the values object
                 values.push(value);
 
-                //                on mouseover, run the updateInfo function on each layer
+                //on mouseover, run the updateInfo function on each layer
                 layer.on('mouseover', function () {
                     updateInfo(this);
 
-                    //                    set the style on mouseover of each layer (county) to show a yellow outline and bring the linework to the front.
+                    // set the style on mouseover of each layer (county) to show a yellow outline and bring the linework to the front.
                     this.setStyle({
                         color: 'yellow'
                         , weight: 3
                         , opacity: 0.9
                     }).bringToFront();
 
-
                 });
 
-                //                on mouseout, change the layer back to a black outline
+                //on mouseout, change the layer back to a black outline
                 layer.on('mouseout', function () {
                     this.setStyle({
                         color: 'black'
                         , weight: 1
                         , fillOpacity: 1
+
                     })
+
                 })
 
             });
 
-//            on mouseover show the .info element
+            //on mouseover show the .info element
             dataLayer.on('mouseover', function () {
                 $(".info").show();
-
             });
-//            on mouseover hide the .info element
+
+            //on mouseover hide the .info element
             dataLayer.on('mouseout', function () {
                 $(".info").hide();
-
             });
-            
-//            set up the clusters by using the simple statistics quantiles function. Feed in the values object from above and then an array for the quantile breaks
+
+            //set up the clusters by using the simple statistics quantiles function. Feed in the values object from above and then an array for the quantile breaks
             var clusters = ss.quantile(values, [0, 0.2, 0.4, 0.6, 0.8, 1.0]);
 
             var breaks = []; //declare an empty objects for the breaks
 
-//            loop through the breaks, and append the cluster ranges as a list of arrays, each containing the lowest and highest value in the class
+            //loop through the breaks, and append the cluster ranges as a list of arrays, each containing the lowest and highest value in the class
             for (var i = 0; i < clusters.length - 1; i++) {
+
                 breaks.push([clusters[i], clusters[i + 1]])
                 console.log(breaks);
+
             }
 
-            return breaks; // return the breaks value so it can be passed to other functions
+            return breaks; //return the breaks value so it can be passed to other functions
 
         }
 
@@ -366,7 +375,7 @@
 
         function getColor(d, breaks) {
 
-//                        use the input value of the current layer and return a specific color if is below each ranges highest value. If its not below, cycle to the next class break and check if its lower than that breaks highest value
+            //use the input value of the current layer and return a specific color if is below each ranges highest value. If its not below, cycle to the next class break and check if its lower than that breaks highest value
             if (d <= breaks[0][1]) {
                 return '#eff3ff';
             } else if (d <= breaks[1][1]) {
@@ -378,80 +387,88 @@
             } else if (d <= breaks[4][1]) {
                 return '#08519c'
             }
+
         }
 
         // function to draw the legend
 
         function drawLegend() {
 
-//            add the legend as a leaflet control element and position it in the topleft
+            //add the legend as a leaflet control element and position it in the topleft
             var legend = L.control({
+
                 position: 'topleft'
+
             });
 
-//            when the legend is added run a function that creates a vic element for the legend in the DOM
+            //when the legend is added run a function that creates a vic element for the legend in the DOM
             legend.onAdd = function () {
 
                 var div = L.DomUtil.create('div', 'legend');
-
                 return div;
 
             };
 
-            legend.addTo(map); // add the lenend to the map
+            legend.addTo(map); //add the legend to the map
+
         }
 
         function updateLegend(breaks) {
-//            create a legend variable that selects the legend element using jQuery
+
+            //create a legend variable that selects the legend element using jQuery
             var legend = $('.legend');
-            
-//            create the html content of the legend showing the county name
+
+            //create the html content of the legend showing the county name
             legend.html("<h3>" + "Unemployment Rate by County " + attribute + "</h3>");
 
-//            loop through each group of breaks, 
+            //loop through each group of breaks, 
             for (var i = 0; i < breaks.length; i++) {
 
-//                pick teh colors by feeding in the current breaks value to the getColor function
+                //pick the colors by feeding in the current breaks value to the getColor function
                 var color = getColor(breaks[i][1], breaks);
-//                append the current color to the span styling, and set the legend label to read the current breaks values
+                //append the current color to the span styling, and set the legend label to read the current breaks values
                 legend.append(
                     '<span style="background:' + color + '"></span> ' +
                     '<label>' + (breaks[i][0]).toLocaleString() + ' &mdash; ' +
                     (breaks[i][1]).toLocaleString() + '</label>');
+
             }
-        } 
+
+        }
 
         function drawInfo() {
 
-            //            establish the info box as a leaflet control object, and position it in the top right.
+            //establish the info box as a leaflet control object, and position it in the top right.
             var info = L.control({
                 position: 'topright'
             });
 
-            //            create an HTML div element in the info class use the DomUtil to create the info div element
+            //create an HTML div element in the info class use the DomUtil to create the info div element
             info.onAdd = function (map) {
+
                 var div = L.DomUtil.create('div', 'info');
                 return div;
+
             }
 
-            //            add the info element to the map and hide it
+            //add the info element to the map and hide it
             info.addTo(map);
             $(".info").hide();
         }
 
         function updateInfo(layer) {
 
-            //            create an abbreviated variable for the layer properties
+            //create an abbreviated variable for the layer properties
             var props = layer.feature.properties;
 
-            //            create an html object that displays the current county
+            //create an html object that displays the current county
             var html = "<h3>" + props['NAME'] + " County Unemployment Rates</h3>"
 
-            //            loop through each year and append the legend label for unemployment rate for each year to the html tag for the current county. This could be manually entered for each year but looping through and appending is more efficient
+            //loop through each year and append the legend label for unemployment rate for each year to the html tag for the current county. This could be manually entered for each year but looping through and appending is more efficient
             for (var i = 2000; i < 2014; i++) {
                 html += (+i + ": <b>" + props[i] + "%</b><br>");
             }
-            //            insert the html text from above into the .info element
+            //insert the html text from above into the .info element
             $(".info").html(html);
         }
 
@@ -485,7 +502,7 @@
 
             //select the year-slider form element
             $(".year-slider")
-//            when the slider is changed, call a function that updates the attribute value to the current year position, and then run the update map function to generate the map and legend again
+                //            when the slider is changed, call a function that updates the attribute value to the current year position, and then run the update map function to generate the map and legend again
                 .on("input change", function () {
                     attribute = $(this).val();
                     updateMap();
