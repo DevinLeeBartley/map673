@@ -3,7 +3,7 @@
 
 <head>
     <meta charset=utf-8 />
-    <title>Kentucky Unemployment Rates</title>
+    <title>Kentucky Unemployment Rate 2000-2013</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 
     <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
@@ -59,6 +59,7 @@
             font-size: 1em;
             color: #001323;
         }
+        /*        define the properties of the legend element*/
         
         .legend {
             padding: 6px 8px;
@@ -69,6 +70,7 @@
             border-radius: 5px;
             width: 160px;
         }
+        /*        define font size, weight, color and margin for the legend header*/
         
         .legend h3 {
             font-size: 1.1em;
@@ -82,6 +84,7 @@
             list-style-type: none;
             height: 22px;
         }
+        /*        give each span element some width and height and float on the left side so that the labels show up next to them*/
         
         .legend span {
             width: 40px;
@@ -90,6 +93,7 @@
             /*            margin-right: 10px;*/
             margin: 0 10px 4px 0;
         }
+        /*        after each label element clear the float property so that the next span element will not float next to it*/
         
         .legend label:after {
             content: '';
@@ -113,8 +117,9 @@
         /*        set max width for leaflet popups*/
         
         .leaflet-popup-content {
-            max-width: 160px;
+            max-width: 180px;
         }
+        /*        add properties for the UI control menu*/
         
         #ui-controls {
             width: 176px;
@@ -124,10 +129,12 @@
             border-radius: 5px;
             color: whitesmoke;
         }
+        /*        add the year-slider element*/
         
         .year-slider {
             width: 100%;
         }
+        /*        set up the span position for the .min and .max class attributes that will be either end of the slider*/
         
         #ui-controls .min {
             float: left;
@@ -136,6 +143,7 @@
         #ui-controls .max {
             float: right;
         }
+        /*        set up the font size and weight for the label*/
         
         label {
             font-size: 1.1em;
@@ -145,18 +153,19 @@
 </head>
 
 <body>
-    <h1>Kentucky Unemployment Rate</h1>
+    <h1>Kentucky Unemployment Rate 2000-2013</h1>
     <!--    Declare div map elements-->
     <div id='map'></div>
     <!--    Declare UI Controls Div element-->
     <div id='ui-controls'>
         <label>
+            <!--            create a span element, with an input type of range. Range creates a slider form widget in HTML The step value indicates how much the slider should advance on each step-->
             <span class="min">2000</span><span class="max">2013</span>
             <input type="range" min="2000" , max="2013" , value="2000" , step="1" , class="year-slider"></input>
         </label>
     </div>
     <script>
-        //    Create labels variable for map
+        //    Create labels variable for map with each label element that will be required.
         var labels = {
             "NAME": "County Name"
             , "2000": "2000"
@@ -175,7 +184,7 @@
             , "2013": "2013"
         }
 
-        // instantiate the Leaflet map
+        // instantiate the Leaflet map and set the zoom to automatically view Kentucky
 
         var options = {
             center: [37.6, -85.3]
@@ -201,22 +210,17 @@
 
         // AJAX requests to load data files
 
+        //        Use jQuery to load the JSON file into the map
         $.getJSON("ky-counties.json", function (counties) {
-
+            //        Use PapaParse to grab the unemployment csv spreadsheet and transfer it to JSON
             Papa.parse('ky-unemployment-data.csv', {
 
                 download: true
                 , header: true
                 , complete: function (data) {
 
-                    //                    pass the states and data files to a function
+                    //                    pass the counties and data files to a function
                     processData(counties, data);
-
-                    // data is accessible to us here
-                    //                    console.log(data);
-
-                    // note that counties is also accessible here!
-                    //                    console.log(counties);
 
                 }
             }); // end of Papa.parse() 
@@ -228,13 +232,13 @@
 
 
         function processData(counties, data) {
-            //            console.log(counties, data);
+            //            loop through all the counties
             for (var county in counties.features) {
-
+                //assign the props variable to shorten access to a county property
                 var props = counties.features[county].properties;
 
                 //                console.log(props);
-
+                //                loop through all the objects in the data file, if the county FIP code equals the data file FIP CNTY code, make the county properties match the data file
                 for (var d in data.data) {
                     if (props.COUNTY_FIP == data.data[d].CNTY) {
                         counties.features[county].properties = data.data[d];
@@ -245,10 +249,7 @@
 
             } // outer loop complete
 
-            console.log("end");
-            console.log(data);
-            console.log(counties);
-            //
+            // Call the functions to draw the legend, draw the map, update the map, create the slider, and draw the info window.
             drawLegend();
 
             drawMap(counties);
@@ -262,7 +263,7 @@
         }
 
         function drawMap(counties) {
-
+            //            create a dataLayer from the counties file set the default properties
             dataLayer = L.geoJson(counties, {
                 style: function (feature) {
                     return {
@@ -274,57 +275,57 @@
                 }
             }).addTo(map);
 
-            console.log("draw map");
-
-
         }
 
         function updateMap(counties) {
 
-            var breaks = getClassBreaks();
+            var breaks = getClassBreaks(); // declare a new variable called breaks that calls the function getClassBreaks()
 
             dataLayer.eachLayer(function (layer) {
 
-                var props = layer.feature.properties;
+                var props = layer.feature.properties; // simplify accessing the properties
 
-                //                console.log(props[attribute], breaks);
-                //                console.log(layer.feature);
-
+                //                set the style of each layer to be based on what the getColor function returns
                 layer.setStyle({
                     fillColor: getColor(props[attribute], breaks)
                 });
 
-
-                                layer.bindPopup("<b>" + props["NAME"] + " County</b></br>" + "Unemployment Rate in " + attribute + ": " +
-                                    props[attribute] + "%");
+                //                bind a popup to each layer that shows the county name and the currently selected attribute (which is the current years unemployment rate)
+                layer.bindPopup("<b>" + props["NAME"] + " County</b></br>" + "Unemployment Rate in " + attribute + ": " +
+                    props[attribute] + "%");
             });
 
+            //            update the legend and feed in the breaks value for the current year
             updateLegend(breaks);
 
         }
 
         function getClassBreaks() {
 
-            var values = [];
+            var values = []; // declare an empty object for the values
 
             dataLayer.eachLayer(function (layer) {
-                //                attributes are strings - convert to float
+                //                declare the value layer to be the current unemployment rate. The attributes are natively in string format so the parseFloat commant will convert them to a float value
                 var value = parseFloat(layer.feature.properties[attribute]);
 
+                //                append each individual value to the values object
                 values.push(value);
 
+                //                on mouseover, run the updateInfo function on each layer
                 layer.on('mouseover', function () {
                     updateInfo(this);
 
-                    //                    set the style on mouseover to show a yellow outline
+                    //                    set the style on mouseover of each layer (county) to show a yellow outline and bring the linework to the front.
                     this.setStyle({
                         color: 'yellow'
                         , weight: 3
                         , opacity: 0.9
-                    })
+                    }).bringToFront();
+
 
                 });
 
+                //                on mouseout, change the layer back to a black outline
                 layer.on('mouseout', function () {
                     this.setStyle({
                         color: 'black'
@@ -335,29 +336,29 @@
 
             });
 
+//            on mouseover show the .info element
+            dataLayer.on('mouseover', function () {
+                $(".info").show();
 
-//            Note: Do I need the lines below(or do they do the same as the lines above ? ) Also move highlight to front!!!
-                            dataLayer.on('mouseover', function () {
-                                $(".info").show();
-                
-                            });
-                
-                            dataLayer.on('mouseout', function () {
-                                $(".info").hide();
-                
-                            });
+            });
+//            on mouseover hide the .info element
+            dataLayer.on('mouseout', function () {
+                $(".info").hide();
 
+            });
+            
+//            set up the clusters by using the simple statistics quantiles function. Feed in the values object from above and then an array for the quantile breaks
             var clusters = ss.quantile(values, [0, 0.2, 0.4, 0.6, 0.8, 1.0]);
-            //            var clusters = ss.ckmeans(values, 6);
 
-            var breaks = [];
+            var breaks = []; //declare an empty objects for the breaks
 
+//            loop through the breaks, and append the cluster ranges as a list of arrays, each containing the lowest and highest value in the class
             for (var i = 0; i < clusters.length - 1; i++) {
                 breaks.push([clusters[i], clusters[i + 1]])
                 console.log(breaks);
             }
 
-            return breaks;
+            return breaks; // return the breaks value so it can be passed to other functions
 
         }
 
@@ -365,20 +366,17 @@
 
         function getColor(d, breaks) {
 
-            //            console.log(breaks);
-
-            //            use the input value of the current layer and return a specific color if it falls within the range of each breaks value.
-
+//                        use the input value of the current layer and return a specific color if is below each ranges highest value. If its not below, cycle to the next class break and check if its lower than that breaks highest value
             if (d <= breaks[0][1]) {
-                return '#edf8fb';
+                return '#eff3ff';
             } else if (d <= breaks[1][1]) {
-                return '#b3cde3';
+                return '#bdd7e7';
             } else if (d <= breaks[2][1]) {
-                return '#8c96c6';
+                return '#6baed6';
             } else if (d <= breaks[3][1]) {
-                return '#8856a7'
+                return '#3182bd'
             } else if (d <= breaks[4][1]) {
-                return '#810f7c'
+                return '#08519c'
             }
         }
 
@@ -386,10 +384,12 @@
 
         function drawLegend() {
 
+//            add the legend as a leaflet control element and position it in the topleft
             var legend = L.control({
                 position: 'topleft'
             });
 
+//            when the legend is added run a function that creates a vic element for the legend in the DOM
             legend.onAdd = function () {
 
                 var div = L.DomUtil.create('div', 'legend');
@@ -398,30 +398,28 @@
 
             };
 
-            legend.addTo(map);
+            legend.addTo(map); // add the lenend to the map
         }
 
         function updateLegend(breaks) {
-
+//            create a legend variable that selects the legend element using jQuery
             var legend = $('.legend');
-
+            
+//            create the html content of the legend showing the county name
             legend.html("<h3>" + "Unemployment Rate by County " + attribute + "</h3>");
 
-
+//            loop through each group of breaks, 
             for (var i = 0; i < breaks.length; i++) {
 
-
+//                pick teh colors by feeding in the current breaks value to the getColor function
                 var color = getColor(breaks[i][1], breaks);
-
-
+//                append the current color to the span styling, and set the legend label to read the current breaks values
                 legend.append(
                     '<span style="background:' + color + '"></span> ' +
                     '<label>' + (breaks[i][0]).toLocaleString() + ' &mdash; ' +
                     (breaks[i][1]).toLocaleString() + '</label>');
-
             }
-
-        }
+        } 
 
         function drawInfo() {
 
@@ -430,7 +428,7 @@
                 position: 'topright'
             });
 
-            //            create an HTML div element in the info class
+            //            create an HTML div element in the info class use the DomUtil to create the info div element
             info.onAdd = function (map) {
                 var div = L.DomUtil.create('div', 'info');
                 return div;
@@ -446,10 +444,13 @@
             //            create an abbreviated variable for the layer properties
             var props = layer.feature.properties;
 
-            //            create an html object that displays all properties of the current layer. 
-            var html = "<h3>" + props['NAME'] + " County Unemployment Rates</h3>" +
-                "2000: <b>" + props["2000"] + "%</b><br>" +               "2001: <b>" + props["2001"] + "%</b><br>" + "2002: <b>" + props["2002"] + "%</b><br>" + "2003: <b>" + props["2003"] + "%</b><br>" + "2004: <b>" + props["2004"] + "%</b><br>" + "2005: <b>" + props["2005"] + "%</b><br>" + "2006: <b>" + props["2006"] + "%</b><br>" + "2007: <b>" + props["2007"] + "%</b><br>" + "2008: <b>" + props["2008"] + "%</b><br>" + "2009: <b>" + props["2009"] + "%</b><br>" + "2010: <b>" + props["2010"] + "%</b><br>" + "2011: <b>" + props["2011"] + "%</b><br>" + "2012: <b>" + props["2012"] + "%</b><br>" + "2013: <b>" + props["2013"] + "%</b><br>"
+            //            create an html object that displays the current county
+            var html = "<h3>" + props['NAME'] + " County Unemployment Rates</h3>"
 
+            //            loop through each year and append the legend label for unemployment rate for each year to the html tag for the current county. This could be manually entered for each year but looping through and appending is more efficient
+            for (var i = 2000; i < 2014; i++) {
+                html += (+i + ": <b>" + props[i] + "%</b><br>");
+            }
             //            insert the html text from above into the .info element
             $(".info").html(html);
         }
@@ -464,14 +465,13 @@
             // when we add this control object to the map
             sliderControl.onAdd = function (map) {
 
-
                 // select an existing DOM element with an id of "ui-controls"
                 var slider = L.DomUtil.get("ui-controls");
 
                 // when the user clicks on the slider element
                 L.DomEvent.addListener(slider, 'mousedown', function (e) {
 
-                    // prevent the click event from bubbling up to the map
+                    // prevent the click event from bubbling up to the map, this means when you click and move the slider it wont also drag the leaflet map around
                     L.DomEvent.stopPropagation(e);
 
                 });
@@ -480,16 +480,13 @@
                 return slider;
             }
 
-
-
             // add the control object containing our slider element to the map
             sliderControl.addTo(map);
 
-            //select the form element
+            //select the year-slider form element
             $(".year-slider")
+//            when the slider is changed, call a function that updates the attribute value to the current year position, and then run the update map function to generate the map and legend again
                 .on("input change", function () {
-                    console.log($(this).val());
-
                     attribute = $(this).val();
                     updateMap();
                 })
