@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset=utf-8 />
+    <title>A simple map</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.js'></script>
+    <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'></script>
+    <link href='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css' rel='stylesheet' />
+    <script src="https://code.jquery.com/jquery-1.12.3.min.js" integrity="sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ=" crossorigin="anonymous"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id='map'></div>
+
+    <script>
+        L.mapbox.accessToken = 'pk.eyJ1IjoiZGJhcnRsZXkiLCJhIjoiOS1tNWVNbyJ9.n5r_NhVqnGPcoZvImw7kgw';
+        var map = L.mapbox.map('map', 'mapbox.light', {
+            center: [-.23, 37.8]
+            , zoom: 6
+            , minZoom: 6
+            , maxZoom: 9
+            , maxBounds: L.latLngBounds([-6.22, 27.72], [5.76, 47.83])
+        });
+
+        omnivore.csv('Kenya_education.csv').addTo(map);
+    
+        
+    </script>
+</body>
+
+</html>
