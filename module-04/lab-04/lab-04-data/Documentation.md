@@ -17,4 +17,14 @@ Artificial Scenario:
 --------
 Summary of Functional Specifications and Content Requirements
 
+Answer: What are you going to make??
+
+-Map will show the livestock per capita in each region.
+-Map will allow for toggling between livestock types, preferrably with a slider for each of use (instead of check boxes).
+-Map will include a legend.
+-Map will include labels that pop up on mouseover showing livestock populations per capita for each region so the actual numbers can be compared quickly.
+-Map will allow for zooming and panning (but to a limited extent).
+
+
+
 
