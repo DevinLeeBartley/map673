@@ -74,9 +74,9 @@
         .legend h3 {
             font-size: 1.1em;
             font-weight: bold;
-            line-height: 1em;
+            line-height: 1.2em;
             color: whitesmoke;
-            margin: 5px;
+            margin: 5px 5px 15px 5px;
         }
         
         .legend li {
@@ -108,6 +108,7 @@
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
             border-radius: 5px;
             text-align: right;
+            max-width: 180px; 
         }
         
         .info h3 {
@@ -160,7 +161,7 @@
         <label>
             <!--create a span element, with an input type of range. Range creates a slider form widget in HTML The step value indicates how much the slider should advance on each step-->
             <span class="min">2000</span><span class="max">2013</span>
-            <input type="range" min="2000" , max="2013" , value="2000" , step="1" , class="year-slider"></input>
+            <input type="range" min="2000" , max="2013" , value="2000" , step="1" , class="year-slider">
         </label>
     </div>
     <script>
@@ -298,6 +299,10 @@
                 //bind a popup to each layer that shows the county name and the currently selected attribute (which is the current years unemployment rate)
                 layer.bindPopup("<b>" + props["NAME"] + " County</b></br>" + "Unemployment Rate in " + attribute + ": " +
                     props[attribute] + "%");
+                
+                layer.on('mouseout', function() {
+                    layer.closePopup();
+                })
             });
 
             // update the legend and feed in the breaks value for the current year
