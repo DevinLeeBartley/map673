@@ -37,7 +37,9 @@
                 //            , maxBounds: L.latLngBounds([-6.22, 27.72], [5.76, 47.83])
         });
 
-        omnivore.csv('livestock.csv').addTo(map);
+        var livestock = omnivore.csv('livestock.csv').addTo(map);
+        console.log(livestock);
+        
 
     </script>
 </body>
