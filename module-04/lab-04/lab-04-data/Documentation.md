@@ -19,12 +19,18 @@ Summary of Functional Specifications and Content Requirements
 
 Answer: What are you going to make??
 
--Map will show the livestock per capita (based on rural population totals from the census) in each region.
+-Map will show the livestock per capita (based on rural population totals from the census) in each region. 
+
 -Livestock per capita will be shown a proportional symbol circles.
+
 -Map will allow for toggling between livestock types, preferrably with a slider for ease of use. A check box legend may also be a posibility.
--Map will include a legend.
+
+-Map will include a legend and info box.
+
 -Map will include labels that pop up on mouseover showing livestock populations per capita for each region so the actual numbers can be compared quickly. Total livestock and population numbers will also be shown.
+
 -Map will allow for zooming and panning (but to a limited extent).
+
 -Proportional symbols will be transparent so that background map information can be read to give location context.
 
 
