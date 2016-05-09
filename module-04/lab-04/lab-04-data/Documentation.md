@@ -25,7 +25,7 @@ Answer: What are you going to make??
 -Map will include a legend.
 -Map will include labels that pop up on mouseover showing livestock populations per capita for each region so the actual numbers can be compared quickly. Total livestock and population numbers will also be shown.
 -Map will allow for zooming and panning (but to a limited extent).
--Proportional symbols will be transparent so that background map information can be read.
+-Proportional symbols will be transparent so that background map information can be read to give location context.
 
 
 
