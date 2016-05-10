@@ -1,46 +1,170 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset=utf-8 />
     <title>A simple map</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-    
+
     <script src='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
     <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'></script>
     <script src='https://code.jquery.com/jquery-1.12.0.min.js'></script>
+
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/simple-statistics/1.0.1/simple_statistics.min.js'></script>
+
 
     <link href='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.css' rel='stylesheet' />
 
     <style>
         body {
-          margin:0;
-          padding:0;
+            margin: 0;
+            padding: 0;
         }
+        
         #map {
-          position:absolute;
-          top:0;
-          bottom:0;
-          width: 100%;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+        
+        #ui-slider {
+            position: absolute;
+            top: 20px;
+            left: 60px;
+        }
+        
+        #grade {
+            position: absolute;
+            left: 60px;
+            top: 50px;
+            padding: 6px 15px 8px;
+            background: whitesmoke;
+            border: 2px solid #d3d3d3;
+        }
+        
+        #grade span {
+            /* future style rules here*/
+        }
+        
+        #legend {
+            position: absolute;
+            right: 0;
+            bottom: 30px;
         }
     </style>
 </head>
+
 <body>
 
     <div id='map'></div>
+
+    <div id="ui-slider">
+        <input type="range" min="1" , max="8" , value="1" , step="1" class="slider">
+    </div>
+
+    <div id="grade">Grade: <span>1</span></div>
+
+    <div id="legend">
+        <h3>2014 enrollments per county</h3>
+        <svg class="legend" width="200" height="200"></svg>
+    </div>
 
     <script>
         L.mapbox.accessToken = 'pk.eyJ1Ijoicmdkb25vaHVlIiwiYSI6Im5Ua3F4UzgifQ.PClcVzU5OUj17kuxqsY_Dg';
 
         var map = L.mapbox.map('map', 'mapbox.light', {
-            center: [-.23, 37.8],
-            zoom: 7,
-            minZoom: 6,
-            maxZoom: 9,
-            maxBounds: L.latLngBounds([-6.22, 27.72],[5.76, 47.83])
+            center: [-.23, 37.8]
+            , zoom: 7
+            , minZoom: 6
+            , maxZoom: 9
+            , maxBounds: L.latLngBounds([-6.22, 27.72], [5.76, 47.83])
         });
-        
-        var countyCentroids = omnivore.csv('kenya_education_2014.csv').addTo(map);
 
+        //                var countyCentroids = omnivore.csv('kenya_education_2014.csv').addTo(map);
+
+        var currentGrade = 1
+            , girls
+            , boys
+            , scaleFactor = .6;
+
+
+        omnivore.csv('kenya_education_2014.csv')
+            .on('ready', function (e) {
+                drawMap(e.target.toGeoJSON())
+            })
+            .on('error', function (e) {
+                console.log(e.error[0].message);
+            });
+
+        function drawMap(schoolData) {
+            var girls = L.geoJson(schoolData, {
+                pointToLayer: function (feature, layer) {
+                    return L.circleMarker(layer, {
+                        color: '#D96D02'
+                        , opacity: 1
+                        , weight: 2
+                        , fillOpacity: 0
+                        , radius: calcRadius(Number(feature.properties.G1))
+                    });
+                }
+            }).addTo(map);
+
+            var boys = L.geoJson(schoolData, {
+                pointToLayer: function (feature, layer) {
+                    return L.circleMarker(layer, {
+                        color: '#6E77B0'
+                        , opacity: 1
+                        , weight: 2
+                        , fillOpacity: 0
+                        , radius: calcRadius(Number(feature.properties.B1))
+                    });
+                }
+            }).addTo(map);
+        }
+
+        function calcRadius(val) {
+            var radius = Math.sqrt(val / Math.PI);
+            return radius * .6;
+        }
+
+        function updateSymbols() {
+
+            var radius, // variable to hold each radius
+                allRadii = []; // empty array to hold all values
+
+            girls.eachLayer(function (layer) {
+                // store a reference to the radius value
+                radius = calcRadius(Number(layer.feature.properties['G' + String(currentGrade)]));
+                // use it to set the radius of the layer
+                layer.setRadius(radius);
+                // push it into the array
+                allRadii.push(radius);
+            });
+
+            boys.eachLayer(function (layer) {
+                radius = calcRadius(Number(layer.feature.properties['B' + String(currentGrade)]));
+                layer.setRadius(radius);
+                allRadii.push(radius);
+            });
+
+            drawLegend(allRadii);
+        }
+
+        WHY DOESNT THIS WORK!!! WHEN YOU SLIDE IT, IT DOESNT OUTPUT - Go Back into lesson.
+        function sequenceUI() {
+
+            var output = $('#grade span');
+
+            $('.slider')
+                .on('input change', function () {
+                    currentGrade = $(this).val();
+                    updateSymbols();
+                    output.html(currentGrade);
+                    console.log("hi");
+                });
+        }
     </script>
 </body>
+
 </html>
