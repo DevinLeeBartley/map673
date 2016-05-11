@@ -7,18 +7,26 @@
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 
     <script src='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
+
     <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'></script>
+
     <script src='https://code.jquery.com/jquery-1.12.0.min.js'></script>
+
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/simple-statistics/1.0.1/simple_statistics.min.js'></script>
 
     <script src='https://cdnjs.cloudflare.com/ajax/libs/simple-statistics/1.0.1/simple_statistics.min.js'></script>
 
 
     <link href='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.css' rel='stylesheet' />
 
+    <link href='https://fonts.googleapis.com/css?family=Work+Sans:400,500,600' rel='stylesheet' type='text/css'>
+
     <style>
         body {
             margin: 0;
             padding: 0;
+            background: whitesmoke;
+            font-family: "Work Sans", sans-serif;
         }
         
         #map {
@@ -52,6 +60,21 @@
             right: 0;
             bottom: 30px;
         }
+        
+        #info {
+            position: absolute;
+            max-width: 200px;
+            right: 15px;
+            top: 15px;
+            display: none;
+            background: whitesmoke;
+            border: 2px solid #d3d3d3;
+            padding: 2px 6px;
+        }
+        
+        #info p {
+            margin: 3px 0 4px;
+        }
     </style>
 </head>
 
@@ -68,6 +91,12 @@
     <div id="legend">
         <h3>2014 enrollments per county</h3>
         <svg class="legend" width="200" height="200"></svg>
+    </div>
+
+    <div id="info">
+        <p>County: <span></span></p>
+        <p class="girls">girls <span></span>: <span></span></p>
+        <p class="boys">boys <span></span>: <span></span></p>
     </div>
 
     <script>
@@ -98,7 +127,7 @@
             });
 
         function drawMap(schoolData) {
-            var girls = L.geoJson(schoolData, {
+            girls = L.geoJson(schoolData, {
                 pointToLayer: function (feature, layer) {
                     return L.circleMarker(layer, {
                         color: '#D96D02'
@@ -110,7 +139,7 @@
                 }
             }).addTo(map);
 
-            var boys = L.geoJson(schoolData, {
+            boys = L.geoJson(schoolData, {
                 pointToLayer: function (feature, layer) {
                     return L.circleMarker(layer, {
                         color: '#6E77B0'
@@ -121,12 +150,14 @@
                     });
                 }
             }).addTo(map);
+
+            sequenceUI();
+
+            infoWindow();
+
+
         }
 
-        function calcRadius(val) {
-            var radius = Math.sqrt(val / Math.PI);
-            return radius * .6;
-        }
 
         function updateSymbols() {
 
@@ -149,9 +180,45 @@
             });
 
             drawLegend(allRadii);
+
+
         }
 
-        WHY DOESNT THIS WORK!!! WHEN YOU SLIDE IT, IT DOESNT OUTPUT - Go Back into lesson.
+        function calcRadius(val) {
+            var radius = Math.sqrt(val / Math.PI);
+            return radius * .6;
+        }
+
+
+        function drawLegend(allRadii) {
+
+            var legend = $('.legend');
+
+            var circles = {
+                max: ss.max(allRadii)
+                , median: ss.median(allRadii)
+                , min: ss.min(allRadii)
+            }
+
+            var svgCircles = '';
+
+            var reverseCalc = function (radius) {
+                return Math.round((Math.pow(radius / scaleFactor, 2) * Math.PI));
+            }
+
+            for (var circle in circles) {
+
+                svgCircles += '<circle cx="' + 100 + '" cy="' + (circles[circle] - 180) * -1 + '" r="' + circles[circle] + '" stroke="#d3d3d3" stroke-width="1" fill="ghostwhite" />';
+
+                svgCircles += '<text x="' + 80 + '" y = "' + (circles[circle] - 160) * -1 + '" fill= "green">' + reverseCalc(circles[circle]) + '</text>'
+            }
+
+            legend.html(svgCircles)
+
+        }
+
+
+
         function sequenceUI() {
 
             var output = $('#grade span');
@@ -163,6 +230,57 @@
                     output.html(currentGrade);
                     console.log("hi");
                 });
+
+
+        }
+
+        function infoWindow() {
+
+            var info = $('#info');
+
+            boys.on('mouseover', function (e) {
+                var props = e.layer.feature.properties;
+                info.show();
+                $('#info span').text(props.COUNTY);
+                $(".girls span:first-child").text('(grade ' + String(currentGrade) + ')');
+                $(".boys span:first-child").text('(grade ' + String(currentGrade) + ')');
+
+                $(".girls span:last-child").text(props['G' + String(currentGrade)].toLocaleString());
+                $(".boys span:last-child").text(props['B' + String(currentGrade)].toLocaleString());
+
+                e.layer.setStyle({
+                    fillOpacity: .6
+                });
+
+            });
+
+            boys.on('mouseout', function (e) {
+                info.hide();
+                e.layer.setStyle({
+                    fillOpacity: 0
+                });
+            });
+
+            $(document).mousemove(function (e) {
+                // first offset from the mouse position of the info window
+                info.css({
+                    "left": e.pageX + 6
+                    , "top": e.pageY - info.height() - 15
+                });
+
+                // if it crashes into the top, flip it lower right
+                if (info.offset().top < 4) {
+                    info.css({
+                        "top": e.pageY + 15
+                    });
+                }
+                // do the same for crashing into the right
+                if (info.offset().left + info.width() >= $(document).width() - 40) {
+                    info.css({
+                        "left": e.pageX - info.width() - 30
+                    });
+                }
+            });
         }
     </script>
 </body>
