@@ -38,50 +38,159 @@
         
         #ui-slider {
             position: absolute;
-            top: 20px;
-            left: 60px;
+            bottom: 20px;
+            left: 36%;
+            width: 200px;
+            padding: 8px 15px 4px;
+            background: #1C9976;
+            border-radius: 3px;
+            color: whitesmoke;
+        }
+        
+        .slider {
+            width: 100%;
         }
         
         #grade {
             position: absolute;
-            left: 60px;
-            top: 50px;
+            bottom: 60px;
+            left: 36%;
             padding: 6px 15px 8px;
             background: whitesmoke;
-            border: 2px solid #d3d3d3;
+            border: 2px solid #1C9976;
+            padding: 6px 15px 8px;
+            border-radius: 3px;
+            color: #1C9976;
+            font-size: 1em;
         }
         
         #grade span {
-            /* future style rules here*/
+            font-size: 1.3em;
+            font-weight: 500;
         }
         
         #legend {
             position: absolute;
-            right: 0;
-            bottom: 30px;
+            right: 15px;
+            bottom: 20px;
+            padding: 8px 15px;
+            background: whitesmoke;
+            border: 2px solid #1C9976;
+            border-radius: 3px;
+            color: #1C9976;
+            width: 160px;
+            height: 220px;
+        }
+        
+        #legend h3 {
+            text-align: right;
+            font-weight: 500;
+            margin: 10px 0 20px;
         }
         
         #info {
-            position: absolute;
-            max-width: 200px;
-            right: 15px;
-            top: 15px;
-            display: none;
+            padding: 8px 15px;
             background: whitesmoke;
-            border: 2px solid #d3d3d3;
-            padding: 2px 6px;
+            border: 2px solid #1C9976;
+            border-radius: 3px;
+            color: #1C9976;
+            position: absolute;
+            font-size: 1em;
+            max-width: 200px;
         }
         
         #info p {
             margin: 3px 0 4px;
+        }
+        
+        .girls {
+            color: #D96D02;
+        }
+        
+        .boys {
+            color: #6E77B0;
+        }
+        
+        #info span:last-child {
+            font-size: 1.3em;
+            font-weight: 500;
+        }
+        
+        #side-panel {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 33%;
+            background: whitesmoke;
+            border-right: 2px solid #1C9976;
+            overflow-y: scroll;
+        }
+        
+        h1 {
+            padding: 8px 25px 8px 15px;
+            margin: 0;
+            background: #1C9976;
+            color: whitesmoke;
+            font-weight: 400;
+            font-size: 1.5em;
+            text-align: right;
+        }
+        
+        h2 {
+            margin: 0;
+            padding: 8px 25px 8px 15px;
+            color: #1C9976;
+            font-weight: 500;
+            font-size: 1.2em;
+            text-align: right;
+        }
+        
+        #side-panel p {
+            margin: 8px 0 4px;
+            padding: 0 25px 0 15px;
+            color: #3d3d3d;
+            text-align: right;
+            font-size: 1em;
+        }
+        
+        #side-panel p:after {
+            content: '';
+            display: block;
+            clear: both;
+        }
+        
+        #side-panel img {
+            float: right;
+            margin: 0 0 15px 15px;
+        }
+        
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            width: 67%;
         }
     </style>
 </head>
 
 <body>
 
-    <div id='map'></div>
+    <div id='side-panel'></div>
 
+    <div id='map'></div>
+    <div id='side-panel'>
+        <h1>Student attrition rates in Kenya</h1>
+        <h2>2014 enrollment rates for boys and girls</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam mollis laoreet elementum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec mi eros, rutrum sed orci eget, venenatis varius est. Pellentesque accumsan est vitae risus malesuada fringilla.</p>
+        <p><img src="images/legend.png" alt="legend"></p>
+        <p>Cras at massa in leo aliquam fermentum. Nunc auctor vestibulum sagittis. Aliquam pulvinar, ipsum in pulvinar tincidunt, enim metus fermentum tellus, quis accumsan ex lorem ut ante. Phasellus fermentum orci eget interdum ultrices. Proin vitae magna id odio ultricies placerat quis id ex. Aenean volutpat volutpat gravida.</p>
+        <h2>About this map</h2>
+        <p>Phasellus in ante nec augue pulvinar pellentesque id vitae nunc. Donec tincidunt metus metus, sed rhoncus ex vehicula sed. Donec erat felis, dignissim bibendum metus ut, tincidunt dictum ligula. Aliquam interdum gravida enim id aliquet. Duis sed ex sed mi aliquam hendrerit. Nunc egestas in lorem ac consectetur. Donec quis rhoncus metus.</p>
+        <h2>About the data</h2>
+        <p>Phasellus in ante nec augue pulvinar pellentesque id vitae nunc. Donec tincidunt metus metus, sed rhoncus ex vehicula sed. Donec erat felis, dignissim bibendum metus ut, tincidunt dictum ligula. Aliquam interdum gravida enim id aliquet. Duis sed ex sed mi aliquam hendrerit. Nunc egestas in lorem ac consectetur. Donec quis rhoncus metus.</p>
+    </div>
     <div id="ui-slider">
         <input type="range" min="1" , max="8" , value="1" , step="1" class="slider">
     </div>
@@ -98,6 +207,8 @@
         <p class="girls">girls <span></span>: <span></span></p>
         <p class="boys">boys <span></span>: <span></span></p>
     </div>
+
+
 
     <script>
         L.mapbox.accessToken = 'pk.eyJ1Ijoicmdkb25vaHVlIiwiYSI6Im5Ua3F4UzgifQ.PClcVzU5OUj17kuxqsY_Dg';
@@ -208,9 +319,10 @@
 
             for (var circle in circles) {
 
-                svgCircles += '<circle cx="' + 100 + '" cy="' + (circles[circle] - 180) * -1 + '" r="' + circles[circle] + '" stroke="#d3d3d3" stroke-width="1" fill="ghostwhite" />';
+                svgCircles += '<circle cx="' + 80 + '" cy="' + (circles[circle] - 140) * -1 + '" r="' + circles[circle] + '" stroke="#1C9976" stroke-width="1" fill="ghostwhite" />';
 
-                svgCircles += '<text x="' + 80 + '" y = "' + (circles[circle] - 160) * -1 + '" fill= "green">' + reverseCalc(circles[circle]) + '</text>'
+                svgCircles += '<text x="' + 60 + '" y = "' + (circles[circle] - 120) * -1 + '" fill= "#1C9976">' + reverseCalc(circles[circle]) + '</text>'
+
             }
 
             legend.html(svgCircles)
