@@ -51,7 +51,7 @@
         
         #livestock {
             position: absolute;
-            bottom: 190px;
+            bottom: 155px;
             left: 36%;
             padding: 6px 15px 8px;
             background: whitesmoke;
@@ -76,7 +76,7 @@
             border-radius: 3px;
             color: #1C9976;
             width: 160px;
-            height: 220px;
+            height: 200px;
         }
         
         #legend h3 {
@@ -93,7 +93,7 @@
             color: #1C9976;
             position: absolute;
             font-size: 1em;
-            max-width: 200px;
+            max-width: 250px;
         }
         
         #info p {
@@ -172,21 +172,16 @@
     <div id='map'></div>
     <div id='side-panel'>
         <h1>Livestock Per Capita in Kenya</h1>
-        <h2>2014 enrollment rates for boys and girls</h2>
+        <h2>2009 livestock counts per Capita by District</h2>
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam mollis laoreet elementum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec mi eros, rutrum sed orci eget, venenatis varius est. Pellentesque accumsan est vitae risus malesuada fringilla.</p>
-        <p><img src="images/legend.png" alt="legend"></p>
+        <!--        <p><img src="images/legend.png" alt="legend"></p>-->
         <p>Cras at massa in leo aliquam fermentum. Nunc auctor vestibulum sagittis. Aliquam pulvinar, ipsum in pulvinar tincidunt, enim metus fermentum tellus, quis accumsan ex lorem ut ante. Phasellus fermentum orci eget interdum ultrices. Proin vitae magna id odio ultricies placerat quis id ex. Aenean volutpat volutpat gravida.</p>
         <h2>About this map</h2>
         <p>Phasellus in ante nec augue pulvinar pellentesque id vitae nunc. Donec tincidunt metus metus, sed rhoncus ex vehicula sed. Donec erat felis, dignissim bibendum metus ut, tincidunt dictum ligula. Aliquam interdum gravida enim id aliquet. Duis sed ex sed mi aliquam hendrerit. Nunc egestas in lorem ac consectetur. Donec quis rhoncus metus.</p>
         <h2>About the data</h2>
         <p>Phasellus in ante nec augue pulvinar pellentesque id vitae nunc. Donec tincidunt metus metus, sed rhoncus ex vehicula sed. Donec erat felis, dignissim bibendum metus ut, tincidunt dictum ligula. Aliquam interdum gravida enim id aliquet. Duis sed ex sed mi aliquam hendrerit. Nunc egestas in lorem ac consectetur. Donec quis rhoncus metus.</p>
     </div>
-    <!--
-    
-    <div id="ui-slider">
-        <input type="range" min="1" , max="8" , value="1" , step="1" class="slider">
-    </div>
--->
+
 
     <form id='data-switcher'>
         <input type="radio" name='animals' value="Cattle" checked> Cattle
@@ -204,16 +199,16 @@
 
     </form>
 
-    <div id="livestock">Livestock: <span>Cattle</span></div>
+    <div id="livestock">Livestock Type: <span>Cattle</span></div>
 
     <div id="legend">
-        <h3>2014 enrollments per county</h3>
+        <h3>Livestock Per Capita by District</h3>
         <svg class="legend" width="200" height="200"></svg>
     </div>
 
     <div id="info">
-        <p>County: <span></span></p>
-        <p class="Cattle">Cattle <span></span>: <span></span></p>
+        <p>District: <span></span></p>
+        <p class="livestockCapita"><span></span>: <span></span></p>
     </div>
 
 
@@ -231,10 +226,8 @@
         //        var livestock = omnivore.csv('livestock.csv').addTo(map);
         //        console.log(livestock);
 
-        var currentAnimal = "Sheep"
-            , girls
-            , boys
-            , scaleFactor = .6;
+        var currentAnimal = "Cattle"
+            , scaleFactor = 1;
 
         omnivore.csv('livestock.csv')
             .on('ready', function (e) {
@@ -262,13 +255,13 @@
             currentLayer = L.geoJson(livestockData, {
                 pointToLayer: function (feature, layer) {
 
-                    console.log(feature.properties.currentAnimal);
+                    //                    console.log(feature.properties[currentAnimal]);
                     return L.circleMarker(layer, {
                         color: '#D96D02'
                         , opacity: 1
                         , weight: 2
                         , fillOpacity: 0
-                        , radius: calcRadius(Number(feature.properties.Sheep / feature.properties.Total))
+                        , radius: calcRadius(Number(feature.properties[currentAnimal] / feature.properties.Total))
                     });
                 }
             }).addTo(map);
@@ -287,8 +280,10 @@
 
             currentLayer.eachLayer(function (layer) {
                 // store a reference to the radius value
-                radius = calcRadius(Number(layer.feature.properties.currentAnimal));
+
+                radius = calcRadius(Number(layer.feature.properties[currentAnimal] / layer.feature.properties.Total));
                 // use it to set the radius of the layer
+                console.log(radius);
                 layer.setRadius(radius);
                 // push it into the array
                 allRadii.push(radius);
@@ -301,32 +296,41 @@
 
         function calcRadius(val) {
             var radius = Math.sqrt(val / Math.PI);
-            return radius * 10;
+            return radius * 20;
         }
 
         function drawLegend(allRadii) {
 
             var legend = $('.legend');
 
+            //            console.log(allRadii);
+
             var circles = {
-                max: ss.max(allRadii)
-                , median: ss.median(allRadii)
-                , min: ss.min(allRadii)
+                //                max: ss.max(allRadii)
+                //                , median: ss.median(allRadii)
+                //                , min: ss.min(allRadii)
+
+                max: 50
+                , median: 25
+                , min: 5
             }
+
+            console.log(circles);
 
             var svgCircles = '';
 
             var reverseCalc = function (radius) {
                 return Math.round((Math.pow(radius / scaleFactor, 2) * Math.PI));
             }
+            value = calcRadius(1);
+            console.log(value + "this is a value");
 
-            for (var circle in circles) {
-
-                svgCircles += '<circle cx="' + 80 + '" cy="' + (circles[circle] - 140) * -1 + '" r="' + circles[circle] + '" stroke="#1C9976" stroke-width="1" fill="ghostwhite" />';
-
-                svgCircles += '<text x="' + 60 + '" y = "' + (circles[circle] - 120) * -1 + '" fill= "#1C9976">' + reverseCalc(circles[circle]) + '</text>'
-
-            }
+            svgCircles += '<circle cx="80" cy="60" r="50" stroke="#1C9976" stroke-width="1" fill="ghostwhite" />';
+            svgCircles += '<text x = 70 y = 30 fill= "#1C9976">20</text>';
+            svgCircles += '<circle cx="80" cy="75" r="35" stroke="#1C9976" stroke-width="1" fill="ghostwhite" />';
+            svgCircles += '<text x=70 y = 55 fill= "#1C9976">10</text>';
+            svgCircles += '<circle cx="80" cy="99" r="11" stroke="#1C9976" stroke-width="1" fill="ghostwhite" />';
+            svgCircles += '<text x=75 y = 103 fill= "#1C9976">1</text>';
 
             legend.html(svgCircles)
 
@@ -344,14 +348,19 @@
             //                    console.log("hi");
             //                });
 
-            $('#data-switcher input')
+            $('#data-switcher input', 
+                function () {
+                    currentAnimal = 'Cattle';
+                    updateSymbols();
+                    output.html(currentAnimal);
+                    console.log(currentAnimal);
+                })
                 .on('change', function () {
                     currentAnimal = $(this).val();
                     updateSymbols();
                     output.html(currentAnimal);
                     console.log(currentAnimal);
                 });
-
 
         }
 
@@ -362,10 +371,10 @@
             currentLayer.on('mouseover', function (e) {
                 var props = e.layer.feature.properties;
                 info.show();
-                $('#info span').text(props.COUNTY);
-                $(".cattle span:first-child").text('(livestock ' + String(currentAnimal) + ')');
-
-                $(".cattle span:last-child").text(props[String(currentAnimal)].toLocaleString());
+                $('#info span').text(props.District);
+                $(".livestockCapita span:first-child").text(String(currentAnimal) + "  per Capita");
+                console.log(props.Total);
+                $(".livestockCapita span:last-child").text((props[currentAnimal] / props.Total).toLocaleString());
 
                 e.layer.setStyle({
                     fillOpacity: .6
