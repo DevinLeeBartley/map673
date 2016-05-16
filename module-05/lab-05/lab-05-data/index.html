@@ -36,8 +36,8 @@
         
         #data-switcher {
             position: absolute;
-            bottom: 20px;
-            left: 36%;
+            bottom: 383px;
+            left: 1%;
             width: 200px;
             padding: 8px 15px 4px;
             background: #dddfd4;
@@ -52,8 +52,8 @@
         
         #livestock {
             position: absolute;
-            bottom: 158px;
-            left: 36%;
+            bottom: 523px;
+            left: 1%;
             padding: 6px 15px 8px;
             background: #dddfd4;
             border: 2px solid #173e43;
@@ -69,8 +69,8 @@
         
         #legend {
             position: absolute;
-            right: 15px;
-            bottom: 20px;
+            left: 1%;
+            bottom: 160px;
             padding: 8px 15px;
             background: #dddfd4;
             border: 2px solid #173e43;
@@ -81,9 +81,9 @@
         }
         
         #legend h3 {
-            text-align: center;
+            text-align: top center;
             font-weight: 500;
-            margin: 10px 0 20px;
+            margin: 0px 0 0px;
         }
         
         #info {
@@ -112,32 +112,40 @@
         
         #side-panel {
             position: absolute;
-            left: 0;
-            top: 0;
+/*            left: 0;*/
+/*            top: 0;*/
             bottom: 0;
-            width: 33%;
+/*            width: 20%;*/
+            height: 25%;
             background: #3fb0ac;
             border-right: 2px solid #173e43;
             overflow-y: scroll;
         }
         
         h1 {
-            padding: 8px 25px 8px 15px;
+            padding: 5px 8px 5px 8px;
             margin: 0;
-            background: #fae596;
+            background: #dddfd4;
             color: #173e43;
-            font-weight: 400;
-            font-size: 1.5em;
-            text-align: right;
+            font-weight: 600;
+            font-size: 1.2em;
+/*            text-align: right;*/
         }
         
         h2 {
             margin: 0;
-            padding: 8px 25px 8px 15px;
+            padding: 0px 5px 0px 5px;
             color: #173e43;
             font-weight: 500;
-            font-size: 1.2em;
-            text-align: right;
+            font-size: 1.1em;
+/*            text-align: right;*/
+        }
+        
+        h3 {
+            margin: 5;
+            padding: 0px 8px 55px 8px;
+            font-size: 1.0em;
+            font-weight: 400;
         }
         
         #side-panel p {
@@ -164,7 +172,7 @@
             top: 0;
             bottom: 0;
             right: 0;
-            width: 67%;
+            width: 100%;
         }
     </style>
 </head>
@@ -173,13 +181,12 @@
     <div id='wrapper'>
         <div id='map'></div>
         <div id='side-panel'>
-            <h1>Livestock Per Capita in Kenya</h1>
-            <h2>2009 livestock counts per Capita by District</h2>
+            <h1>Livestock Per Capita in Kenya - 2009 counts per Capita by District</h1>
             <p></p>
-            <h2>About this map</h2>
-            <p>This map shows the number of livestock in each district</p>
-            <h2>About the data</h2>
-            <p>Phasellus in ante nec augue pulvinar pellentesque id vitae nunc. Donec tincidunt metus metus, sed rhoncus ex vehicula sed. Donec erat felis, dignissim bibendum metus ut, tincidunt dictum ligula. Aliquam interdum gravida enim id aliquet. Duis sed ex sed mi aliquam hendrerit. Nunc egestas in lorem ac consectetur. Donec quis rhoncus metus.</p>
+<!--            <h2>About this map</h2>-->
+            <h3>This map shows the livestock counts per capita in each district in Kenya. Select an animal in the option menu to see how many animals per person were observed in each area. For detailed information move your mouse over the circle. The map data was downloaded from the <a href="https://opendata.go.ke/">Kenya Open Data Portal</a> and reflects information collected in the 2009 census.</p>
+            <p>Created by Devin Bartley on May 15, 2016 </p>
+            </h3>
         </div>
 
 
@@ -203,7 +210,7 @@
 
         <div id="legend">
             <h3>Legend: Livestock Per Capita</h3>
-            <svg class="legend" width="200" height="200"></svg>
+            <svg class="legend" width="200" height="3000" position = "absolute"></svg>
         </div>
 
         <div id="info">
@@ -217,7 +224,7 @@
 
             var map = L.mapbox.map('map', 'mapbox.light', {
                 center: [-.23, 37.8]
-                , zoom: 6
+                , zoom: 7
                 , minZoom: 6
                 , maxZoom: 9
                 , maxBounds: L.latLngBounds([-6.22, 27.72], [5.76, 47.83])
@@ -240,31 +247,6 @@
                 });
 
             function drawMap(livestockData) {
-                //            $.getJSON("livestock_district.geojson", function (data) {
-                //                dataLayer = L.geoJson(data, {
-                //                    style: function(feature) {
-                //                        return {
-                //                            color: 'black'
-                //                            ,weight: 1
-                //                            ,fillOpacity: 0
-                //                            , fillColor: 'white'
-                //                        }
-                //                    }
-                //                }).addTo(map);
-                //            });
-                //            Cattle = L.geoJson(livestockData, {
-                //                pointToLayer: function (feature, layer) {
-                //
-                //                    console.log(feature.properties.Cattle);
-                //                    return L.circleMarker(layer, {
-                //                        color: '#D96D02'
-                //                        , opacity: 1
-                //                        , weight: 2
-                //                        , fillOpacity: 0
-                //                        , radius: calcRadius(Number(feature.properties.Cattle / feature.properties.Total))
-                //                    });
-                //                }
-                //            }).addTo(map);
 
                 currentLayer = L.geoJson(livestockData, {
                     pointToLayer: function (feature, layer) {
@@ -339,12 +321,12 @@
                 value = calcRadius(1);
                 console.log(value + "this is a value");
 
-                svgCircles += '<circle cx="80" cy="60" r="50" stroke="#173e43" stroke-width="1" fill="#dddfd4" />';
-                svgCircles += '<text x = 70 y = 30 fill= "#173e43">20</text>';
-                svgCircles += '<circle cx="80" cy="75" r="35" stroke="#173e43" stroke-width="1" fill="#dddfd4" />';
-                svgCircles += '<text x=70 y = 55 fill= "#173e43">10</text>';
-                svgCircles += '<circle cx="80" cy="99" r="11" stroke="#173e43" stroke-width="1" fill="#dddfd4" />';
-                svgCircles += '<text x=75 y = 103 fill= "#173e43">1</text>';
+                svgCircles += '<circle cx="80" cy="55" r="50" stroke="#173e43" stroke-width="1" fill="#dddfd4" />';
+                svgCircles += '<text x = 70 y = 20 fill= "#173e43">20</text>';
+                svgCircles += '<circle cx="80" cy="70" r="35" stroke="#173e43" stroke-width="1" fill="#dddfd4" />';
+                svgCircles += '<text x=70 y = 50 fill= "#173e43">10</text>';
+                svgCircles += '<circle cx="80" cy="94" r="11" stroke="#173e43" stroke-width="1" fill="#dddfd4" />';
+                svgCircles += '<text x=75 y = 98 fill= "#173e43">1</text>';
 
                 legend.html(svgCircles)
 
@@ -354,13 +336,6 @@
 
                 var output = $('#livestock span');
 
-                //            $('.slider')
-                //                .on('input change', function () {
-                //                    currentGrade = $(this).val();
-                //                    updateSymbols();
-                //                    output.html(currentGrade);
-                //                    console.log("hi");
-                //                });
 
                 $('#data-switcher input'
                         , function () {
