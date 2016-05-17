@@ -97,6 +97,7 @@
             position: absolute;
             font-size: 1em;
             max-width: 200px;
+           display: none; /* so doesn't appear when page loads */
         }
         
         #info p {
@@ -257,7 +258,6 @@
                         , opacity: 1
                         , weight: 2
                         , fillOpacity: 0
-                        , radius: calcRadius(Number(feature.properties.B1))
                     });
                 }
             }).addTo(map);
@@ -265,6 +265,8 @@
             sequenceUI();
 
             infoWindow();
+            
+            updateSymbols(); // call here to draw legend upon page load
 
 
         }
