@@ -1,0 +1,151 @@
+body {
+    margin: 0;
+    padding: 0;
+    background: whitesmoke;
+    font-family: "Work Sans", sans-serif;
+}
+
+#map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+#ui-slider {
+    position: absolute;
+    bottom: 20px;
+    left: 36%;
+    width: 200px;
+    padding: 8px 15px 4px;
+    background: #1C9976;
+    border-radius: 3px;
+    color: whitesmoke;
+}
+
+.slider {
+    width: 100%;
+}
+
+#grade {
+    position: absolute;
+    bottom: 60px;
+    left: 36%;
+    padding: 6px 15px 8px;
+    background: whitesmoke;
+    border: 2px solid #1C9976;
+    padding: 6px 15px 8px;
+    border-radius: 3px;
+    color: #1C9976;
+    font-size: 1em;
+}
+
+#grade span {
+    font-size: 1.3em;
+    font-weight: 500;
+}
+
+#legend {
+    position: absolute;
+    right: 15px;
+    bottom: 20px;
+    padding: 8px 15px;
+    background: whitesmoke;
+    border: 2px solid #1C9976;
+    border-radius: 3px;
+    color: #1C9976;
+    width: 160px;
+    height: 220px;
+}
+
+#legend h3 {
+    text-align: right;
+    font-weight: 500;
+    margin: 10px 0 20px;
+}
+
+#info {
+    padding: 8px 15px;
+    background: whitesmoke;
+    border: 2px solid #1C9976;
+    border-radius: 3px;
+    color: #1C9976;
+    position: absolute;
+    font-size: 1em;
+    max-width: 200px;
+   display: none; /* so doesn't appear when page loads */
+}
+
+#info p {
+    margin: 3px 0 4px;
+}
+
+.girls {
+    color: #D96D02;
+}
+
+.boys {
+    color: #6E77B0;
+}
+
+#info span:last-child {
+    font-size: 1.3em;
+    font-weight: 500;
+}
+
+#side-panel {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 33%;
+    background: whitesmoke;
+    border-right: 2px solid #1C9976;
+    overflow-y: scroll;
+}
+
+h1 {
+    padding: 8px 25px 8px 15px;
+    margin: 0;
+    background: #1C9976;
+    color: whitesmoke;
+    font-weight: 400;
+    font-size: 1.5em;
+    text-align: right;
+}
+
+h2 {
+    margin: 0;
+    padding: 8px 25px 8px 15px;
+    color: #1C9976;
+    font-weight: 500;
+    font-size: 1.2em;
+    text-align: right;
+}
+
+#side-panel p {
+    margin: 8px 0 4px;
+    padding: 0 25px 0 15px;
+    color: #3d3d3d;
+    text-align: right;
+    font-size: 1em;
+}
+
+#side-panel p:after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+#side-panel img {
+    float: right;
+    margin: 0 0 15px 15px;
+}
+
+#map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 67%;
+}
