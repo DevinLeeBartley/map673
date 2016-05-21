@@ -1,27 +1,142 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>673 Module 06 CartoDB Starter Template</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
     <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" />
-    
+
     <style>
-      html, body, #map {
-        height: 100%;
-        padding: 0;
-        margin: 0;
-      }
+        html,
+        body,
+        #map {
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            background-color: #3d3d3d;
+        }
+        
+        ,
     </style>
 </head>
+
 <body>
-    
+
     <div id="map"></div>
 
     <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+    <script type
+    
     <script>
+        var map = new L.Map("map", {
+            center: [10, 5]
+            , zoom: 4
+        })
 
+        var cartoCSS = '#cancerdeaths_bycounty{'+
+//                      'polygon-fill: steelblue;'+
+//          'polygon-opacity: 0.8;'+
+//          'polygon-comp-op: lighten;'+
+//          'line-color: #FFF;'+
+//          'line-width: 0.5;'+
+//          'line-opacity: 1;'+
+//        '}';
+            'polygon-fill: #0080ff;'+
+            'polygon-opacity: 0.9;'+
+            'line-color: #FFF;'+
+            'line-width: 1;'+
+            'line-opacity: 1;'+
+        '}';
+//        #
+//        cancerdeaths_bycounty[cancer_deaths_rate <= 376.2] {
+//            polygon - fill: #e66101;
+//        }#
+//        cancerdeaths_bycounty[cancer_deaths_rate <= 251.9] {
+//            polygon - fill: #f59b42;
+//        }#
+//        cancerdeaths_bycounty[cancer_deaths_rate <= 226] {
+//            polygon - fill: #fbcd94;
+//        }#
+//        cancerdeaths_bycounty[cancer_deaths_rate <= 217] {
+//            polygon - fill: #f7f7f7;
+//        }#
+//        cancerdeaths_bycounty[cancer_deaths_rate <= 196.9] {
+//            polygon - fill: #c9c4de;
+//        }#
+//        cancerdeaths_bycounty[cancer_deaths_rate <= 167.5] {
+//                polygon - fill: #9686bf;
+//        }# cancerdeaths_bycounty[cancer_deaths_rate <= 135.9] {
+//                        polygon - fill: #5e3c99;
+//        }';
+        
+        var sourceObject = {
+            user_name: 'dbartley',
+            type: 'cartodb',
+            sublayers: [
+                {
+                sql: "SELECT ST_Transform(the_geom, 102008) AS the_geom_webmercator, cartodb_id, cancer_deaths_county, cancer_deaths_rate, cancer_deaths_state, fips FROM cancerdeaths_bycounty_copy WHERE cancer_deaths_rate > 0",
+                cartocss: $("#counties-styles").text()
+                }
+            ]
+            };
+        
+        console.log(sourceObject);
+        
+//        var url = 'https://dbartley.cartodb.com/api/v2/viz/186f226c-96d0-11e5-99ec-0e674067d321/viz.json';
+
+                        cartodb.createLayer(map, sourceObject).addTo(map);
+
+//                        var sourceObject = {
+//                            user_name: '< your CartoDB user name>'
+//                            , type: 'cartodb'
+//                            , sublayers: [
+//                                {
+//                                    sql: "<sql statement selecting from CartoDB table >"
+//                                    , cartocss: < string of cartoCSS rules
+//                                    for styling the layer >
+//                }
+//            ]
+//                        }
+
+//                        cartodb.createLayer(map, sourceObject).addTo(map);
+
+                        //        cartodb.createVis('map', url, {
+                        //                shareable: false, // removes the share link upper right of map
+                        //                title: true, // adds better title banner across the top,
+                        //                description: false
+                        //                , search: false, // doesn't work well when map has been projected
+                        //                zoom: 3, // sets initial zoom level
+                        //                cartodb_logo: false
+                        //                , layer_selector: true
+                        //                , fullscreen: false
+                        //
+                        //            })
+                        //            .done(function (vis, layers) {
+                        ////                console.log(vis, layers);
+                        ////                console.log(vis.getLayers()); /// same as layers here
+                        //                console.log(vis.getOverlays()); /// same as layers here
+                        //
+                        //                var sublayer = layers[1]; // reference to the layers
+                        //
+                        //                console.log(layers[1].getSubLayerCount()) // the number of layers
+                        //
+                        //                sublayer.setInteraction(true); // set the interaction true on the layers
+                        //
+                        //                // retrieve specific information from various features of the layers
+                        //                sublayer.on('featureOver', function (e, latlng, pos, data) {
+                        //                    console.log(e, latlng, pos, data);
+                        //                });
+                        //
+                        //                sublayer.setOpacity(1); // change the opacity of the layers
+                        //
+                        //                sublayer.getSubLayer(2).hide(); // select a specific sublayer of the
+                        //                // layers and hide it
+                        //            
+                        //                var map = vis.getNativeMap(); // returns reference to the Leaflet map instance
+                        //            });
     </script>
 </body>
+
 </html>
