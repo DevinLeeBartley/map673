@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>673 Module 06 CartoDB Starter Template</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+
+    <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" />
+    
+    <link href='https://fonts.googleapis.com/css?family=Lato:400,900' rel='stylesheet' type='text/css'>
+    
+
+    <style>
+        html,
+        body,
+        #map {
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            background-color: #3d3d3d;
+        }
+        
+        #title {
+            font-family: "Lato", sans-serif;
+            position: absolute;
+            top: 10px;
+            left: 28%;
+            align-content: center;
+            text-align: center;
+            border-radius: 12px;
+            background: whitesmoke;
+            color: black;
+            padding: 8px 15px 8px;
+            font-size: 1.5em;
+        }
+        
+    </style>
+</head>
+
+<body>
+
+
+    <div id="map"></div>
+    <div id="title">
+        CANCER RATES BY COUNTY IN THE UNITED STATES</div>
+    <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+    <script type="cartocss/html" id="counties-styles">
+        #cancerdeaths_bycounty{
+  polygon-fill: #0080ff;
+  polygon-opacity: 0.9;
+  line-color: #FFF;
+  line-width: 0;
+  line-opacity: 1;
+}
+#cancerdeaths_bycounty [ cancer_deaths_rate <= 376.2] {
+   polygon-fill: #e66101;
+}
+#cancerdeaths_bycounty [ cancer_deaths_rate <= 251.9] {
+   polygon-fill: #f59b42;
+}
+#cancerdeaths_bycounty [ cancer_deaths_rate <= 226] {
+   polygon-fill: #fbcd94;
+}
+#cancerdeaths_bycounty [ cancer_deaths_rate <= 217] {
+   polygon-fill: #f7f7f7;
+}
+#cancerdeaths_bycounty [ cancer_deaths_rate <= 196.9] {
+   polygon-fill: #c9c4de;
+}
+#cancerdeaths_bycounty [ cancer_deaths_rate <= 167.5] {
+   polygon-fill: #9686bf;
+}
+#cancerdeaths_bycounty [ cancer_deaths_rate <= 135.9] {
+   polygon-fill: #5e3c99;
+} </script>
+
+            <script>
+                var map = new L.Map("map", {
+                    center: [10, 5]
+                    , zoom: 4
+                })
+
+                var cartoCSS = '#cancerdeaths_bycounty{' +
+                    'polygon-fill: #0080ff;' +
+                    'polygon-opacity: 0.9;' +
+                    'line-color: #FFF;' +
+                    'line-width: 1;' +
+                    'line-opacity: 1;' +
+                    '}';
+
+
+                var sourceObject = {
+                    user_name: 'dbartley'
+                    , type: 'cartodb'
+                    , sublayers: [
+                        {
+                            sql: "SELECT ST_Transform(the_geom, 102008) AS the_geom_webmercator, cartodb_id, cancer_deaths_county, cancer_deaths_rate, cancer_deaths_state, fips FROM cancerdeaths_bycounty_copy WHERE cancer_deaths_rate > 0"
+                            , cartocss: $("#counties-styles").text()
+                }
+            ]
+                };
+
+
+                cartodb.createLayer(map, sourceObject).addTo(map);
+
+            </script>
+</body>
+
+</html>
