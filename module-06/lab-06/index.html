@@ -7,9 +7,9 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
     <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" />
-    
+
     <link href='https://fonts.googleapis.com/css?family=Lato:400,900' rel='stylesheet' type='text/css'>
-    
+
 
     <style>
         html,
@@ -20,6 +20,18 @@
             margin: 0;
             background-color: #3d3d3d;
         }
+/*
+        
+        .cartodb-legend-stack { 
+            position: absolute;
+            left: 50%;
+            width: 250px;
+            top:10px;
+            background: rgba(58,58,48,0.5);
+            padding: 10px;
+            z-index: 99;
+            bottom: auto;}
+*/
         
         #title {
             font-family: "Lato", sans-serif;
@@ -35,18 +47,59 @@
             font-size: 1.5em;
         }
         
+        #description {
+            font-family: "Lato", sans-serif;
+            position: absolute;
+            top: 90px;
+            left: 1%;
+            align-content: left;
+            text-align: left;
+            border-radius: 12px;
+            background: whitesmoke;
+            color: black;
+            width: 230px;
+            padding: 8px 15px 8px 15px;
+            font-size: 0.7em;
+        }
+        
     </style>
+
 </head>
 
 <body>
 
 
     <div id="map"></div>
+<!--    <div id="legend"></div>-->
     <div id="title">
         CANCER RATES BY COUNTY IN THE UNITED STATES</div>
+    <div id="description">
+        <h2>ABOUT THIS MAP:</h2>
+    Rates shown are the number of deaths per 100,000 people by county. <br><br>
+
+        Data used to make this map was downloaded from the National Cancer Institute’s State Cancer Profiles website (http://www.statecancerprofiles.cancer.gov/) on 11/13/2015. The data describe cancer rates for all cancer sites by mortality, for all races, sexes, and ages, averaged over the years of 2008 - 2012. <br><br>
+
+        Map Created By: Devin Bartley - May 20, 2016 <br><br>
+
+        CRS: North American Albers Equal Area (EPSG: 102008)</div>
+    
+    <script type="infowindow/html" id="infowindow_template">
+                <div class="cartodb-popup v2">
+         <a href="#close" class="cartodb-popup-close-button close">x</a>
+             <div class="cartodb-popup-content-wrapper">
+               <div class="cartodb-popup-content">
+      <h4>County, State</h4>
+      <p>{{content.data.cancer_deaths_county}}, {{content.data.cancer_deaths_state}}</p>
+      <h4>Cancer Death Rate (per 100,000)</h4>
+      <p>{{content.data.cancer_deaths_rate}}</p>
+               </div>
+             </div>
+             <div class="cartodb-popup-tip-container"></div>
+          </div>
+        </script>
     <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
     <script type="cartocss/html" id="counties-styles">
-        #cancerdeaths_bycounty{
+#cancerdeaths_bycounty{
   polygon-fill: #0080ff;
   polygon-opacity: 0.9;
   line-color: #FFF;
@@ -77,8 +130,8 @@
 
             <script>
                 var map = new L.Map("map", {
-                    center: [10, 5]
-                    , zoom: 4
+                    center: [0, -5]
+                    , zoom: 5
                 })
 
                 var cartoCSS = '#cancerdeaths_bycounty{' +
@@ -102,8 +155,37 @@
                 };
 
 
-                cartodb.createLayer(map, sourceObject).addTo(map);
-
+                cartodb.createLayer(map, sourceObject, {legends:true, infowindow: true}).addTo(map).done(function(layer) {
+                             var legend = new cdb.geo.ui.Legend.Custom({
+            title: "Deaths per 100,000",
+             data: [
+             { name: "252-376", value: "#e66101" },
+             { name: "226-252", value: "#f59b42" },
+             { name: "217-226", value: "#fbcd94" },
+             { name: "197-226", value: "#f7f7f7" },
+             { name: "167-197", value: "#c9c4de" },
+             { name: "136-167", value: "#9686bf" },
+             { name: "<136", value: "#0F3B82" },
+             { name: "NO DATA", value: "#000000" }
+            ]
+        });
+                    
+                    
+        $('#map').append(legend.render().el);
+                    
+                    var sublayer = layer.getSubLayer(0);
+//                    below doesnt work - how to get custom info window to load???
+//                    sublayer.infowindow.set('template', $('#infowindow_template').html());
+//                    sublayer.on('featureClick', function(e, latlng, pos, data) {
+//          alert("Hey! You clicked " + data.cartodb_id);
+//    });
+                    
+        cartodb.vis.Vis.addInfowindow(map, sublayer, ['cancer_deaths_rate', 'cancer_deaths_county', 'cancer_deaths_state'],
+                                      {infowindowTemplate: $('#infowindow_template').text()}
+                                      ) 
+                });
+                    
+        
             </script>
 </body>
 
