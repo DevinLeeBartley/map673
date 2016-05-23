@@ -3,14 +3,17 @@
 
 <head>
     <title>673 Module 06 CartoDB Starter Template</title>
+    
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
     <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" />
 
     <link href='https://fonts.googleapis.com/css?family=Lato:400,900' rel='stylesheet' type='text/css'>
 
-
+    <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+    
     <style>
         html,
         body,
@@ -20,18 +23,6 @@
             margin: 0;
             background-color: #3d3d3d;
         }
-/*
-        
-        .cartodb-legend-stack { 
-            position: absolute;
-            left: 50%;
-            width: 250px;
-            top:10px;
-            background: rgba(58,58,48,0.5);
-            padding: 10px;
-            z-index: 99;
-            bottom: auto;}
-*/
         
         #title {
             font-family: "Lato", sans-serif;
@@ -70,119 +61,127 @@
 
 
     <div id="map"></div>
-<!--    <div id="legend"></div>-->
+    
     <div id="title">
         CANCER RATES BY COUNTY IN THE UNITED STATES</div>
     <div id="description">
-        <h2>ABOUT THIS MAP:</h2>
-    Rates shown are the number of deaths per 100,000 people by county. <br><br>
+        <h3>ABOUT THIS MAP:</h3>
+            Rates shown are the number of deaths per 100,000 people by county. <br><br>
 
-        Data used to make this map was downloaded from the National Cancer Institute’s State Cancer Profiles website (http://www.statecancerprofiles.cancer.gov/) on 11/13/2015. The data describe cancer rates for all cancer sites by mortality, for all races, sexes, and ages, averaged over the years of 2008 - 2012. <br><br>
+            Data used to make this map was downloaded from the National Cancer Institute’s State Cancer Profiles website (http://www.statecancerprofiles.cancer.gov/) on 11/13/2015. The data describe cancer rates for all cancer sites by mortality, for all races, sexes, and ages, averaged over the years of 2008 - 2012. <br><br>
 
-        Map Created By: Devin Bartley - May 20, 2016 <br><br>
+            Map Created By: Devin Bartley - May 20, 2016 <br><br>
 
-        CRS: North American Albers Equal Area (EPSG: 102008)</div>
+            CRS: North American Albers Equal Area (EPSG: 102008)</div>
     
+<!--    Create the infowindow HTML script copied from the cartoDB editor-->
     <script type="infowindow/html" id="infowindow_template">
-                <div class="cartodb-popup v2">
-         <a href="#close" class="cartodb-popup-close-button close">x</a>
-             <div class="cartodb-popup-content-wrapper">
+        <div class="cartodb-popup v2">
+        <a href="#close" class="cartodb-popup-close-button close">x</a>
+            <div class="cartodb-popup-content-wrapper">
                <div class="cartodb-popup-content">
-      <h4>County, State</h4>
-      <p>{{content.data.cancer_deaths_county}}, {{content.data.cancer_deaths_state}}</p>
-      <h4>Cancer Death Rate (per 100,000)</h4>
-      <p>{{content.data.cancer_deaths_rate}}</p>
+                <h4>County, State</h4>
+                <p>{{content.data.cancer_deaths_county}}, {{content.data.cancer_deaths_state}}</p>
+                <h4>Cancer Death Rate (per 100,000)</h4>
+                <p>{{content.data.cancer_deaths_rate}}</p>
                </div>
              </div>
-             <div class="cartodb-popup-tip-container"></div>
+            <div class="cartodb-popup-tip-container"></div>
           </div>
         </script>
-    <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+
+<!--    load the css for the polygon fills by county for each cancer death rate-->
     <script type="cartocss/html" id="counties-styles">
-#cancerdeaths_bycounty{
-  polygon-fill: #0080ff;
-  polygon-opacity: 0.9;
-  line-color: #FFF;
-  line-width: 0;
-  line-opacity: 1;
-}
-#cancerdeaths_bycounty [ cancer_deaths_rate <= 376.2] {
-   polygon-fill: #e66101;
-}
-#cancerdeaths_bycounty [ cancer_deaths_rate <= 251.9] {
-   polygon-fill: #f59b42;
-}
-#cancerdeaths_bycounty [ cancer_deaths_rate <= 226] {
-   polygon-fill: #fbcd94;
-}
-#cancerdeaths_bycounty [ cancer_deaths_rate <= 217] {
-   polygon-fill: #f7f7f7;
-}
-#cancerdeaths_bycounty [ cancer_deaths_rate <= 196.9] {
-   polygon-fill: #c9c4de;
-}
-#cancerdeaths_bycounty [ cancer_deaths_rate <= 167.5] {
-   polygon-fill: #9686bf;
-}
-#cancerdeaths_bycounty [ cancer_deaths_rate <= 135.9] {
-   polygon-fill: #5e3c99;
-} </script>
+            #cancerdeaths_bycounty{
+                polygon-fill: #0080ff;
+                polygon-opacity: 0.9;
+                line-color: #FFF;
+                line-width: 0;
+                line-opacity: 1;
+            }
+            #cancerdeaths_bycounty [ cancer_deaths_rate <= 376.2] {
+                polygon-fill: #e66101;
+            }
+            #cancerdeaths_bycounty [ cancer_deaths_rate <= 251.9] {
+                polygon-fill: #f59b42;
+            }
+            #cancerdeaths_bycounty [ cancer_deaths_rate <= 226] {
+                polygon-fill: #fbcd94;
+            }
+            #cancerdeaths_bycounty [ cancer_deaths_rate <= 217] {
+                polygon-fill: #f7f7f7;
+            }
+            #cancerdeaths_bycounty [ cancer_deaths_rate <= 196.9] {
+                polygon-fill: #c9c4de;
+            }
+            #cancerdeaths_bycounty [ cancer_deaths_rate <= 167.5] {
+                polygon-fill: #9686bf;
+            }
+            #cancerdeaths_bycounty [ cancer_deaths_rate <= 135.9] {
+                polygon-fill: #5e3c99;
+            } </script>
 
             <script>
+                
+                
+//                instantiate a leaflet map object
                 var map = new L.Map("map", {
                     center: [0, -5]
                     , zoom: 5
                 })
 
-                var cartoCSS = '#cancerdeaths_bycounty{' +
-                    'polygon-fill: #0080ff;' +
-                    'polygon-opacity: 0.9;' +
-                    'line-color: #FFF;' +
-                    'line-width: 1;' +
-                    'line-opacity: 1;' +
-                    '}';
-
-
+//                create a source object for the CartoDB createLayer function. set up the user name, type and sublayers.
                 var sourceObject = {
                     user_name: 'dbartley'
                     , type: 'cartodb'
+                    
+//                    for the sublayers, put in the SQL as text and use jQuery to pull the counties-styles script from above.
                     , sublayers: [
                         {
                             sql: "SELECT ST_Transform(the_geom, 102008) AS the_geom_webmercator, cartodb_id, cancer_deaths_county, cancer_deaths_rate, cancer_deaths_state, fips FROM cancerdeaths_bycounty_copy WHERE cancer_deaths_rate > 0"
                             , cartocss: $("#counties-styles").text()
-                }
-            ]
+                        }]
                 };
 
-
-                cartodb.createLayer(map, sourceObject, {legends:true, infowindow: true}).addTo(map).done(function(layer) {
+//                use the cartodb.createLayer function. Feed in the leaflet map object, the sourceObject, and settings for the legend and infowindow
+                cartodb.createLayer(map, sourceObject, {
+                    legends:true,
+                    infowindow: true})
+                
+//                add the layer to the map
+                    .addTo(map)
+                
+//                when done run this callback function
+                    .done(function(layer) {
+                    
+//                    initiate a legend variable with custom names and values. This matches the colors and ranges used to symbolize the cancer rates
                              var legend = new cdb.geo.ui.Legend.Custom({
-            title: "Deaths per 100,000",
-             data: [
-             { name: "252-376", value: "#e66101" },
-             { name: "226-252", value: "#f59b42" },
-             { name: "217-226", value: "#fbcd94" },
-             { name: "197-226", value: "#f7f7f7" },
-             { name: "167-197", value: "#c9c4de" },
-             { name: "136-167", value: "#9686bf" },
-             { name: "<136", value: "#0F3B82" },
-             { name: "NO DATA", value: "#000000" }
-            ]
-        });
+                                title: "Deaths per 100,000",
+                                data: [
+                                    { name: "252-376", value: "#e66101" },
+                                    { name: "226-252", value: "#f59b42" },
+                                    { name: "217-226", value: "#fbcd94" },
+                                    { name: "197-226", value: "#f7f7f7" },
+                                    { name: "167-197", value: "#c9c4de" },
+                                    { name: "136-167", value: "#9686bf" },
+                                    { name: "<136", value: "#0F3B82" },
+                                    { name: "NO DATA", value: "#000000" }
+                                ]
+                            });
                     
+//                    append the legend to the map div and render it
+                    $('#map').append(legend.render().el);
                     
-        $('#map').append(legend.render().el);
-                    
+//                    set up the sublayer variable
                     var sublayer = layer.getSubLayer(0);
-//                    below doesnt work - how to get custom info window to load???
-//                    sublayer.infowindow.set('template', $('#infowindow_template').html());
-//                    sublayer.on('featureClick', function(e, latlng, pos, data) {
-//          alert("Hey! You clicked " + data.cartodb_id);
-//    });
                     
-        cartodb.vis.Vis.addInfowindow(map, sublayer, ['cancer_deaths_rate', 'cancer_deaths_county', 'cancer_deaths_state'],
-                                      {infowindowTemplate: $('#infowindow_template').text()}
-                                      ) 
+//                    set up the info window
+                    cartodb.vis.Vis.addInfowindow(map, sublayer,
+//                                                  specify the fields to load for the info window
+                                    ['cancer_deaths_rate', 'cancer_deaths_county', 'cancer_deaths_state'],
+//                                                  use jQuery to load the text from the #infowindow_temple element to specify the html settings
+                                    {infowindowTemplate: $('#infowindow_template').text()}
+                                    ) 
                 });
                     
         
