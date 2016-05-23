@@ -1,24 +1,88 @@
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>Map 673 Lesson 07 Template</title>
 
     <link href="http://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+
+    <script src="us-counties.js"></script>
+
     <style>
+        h1,
+        h2 {
+            position: absolute;
+            left: 20px;
+            top: 10px;
+            font-size: 2em;
+            font-weight: 100;
+            color: #005DAA;
+        }
+        
         body {
             padding: 0;
             margin: 0;
             background: whitesmoke;
             font-family: Montserrat, sans-serif;
         }
+        
+        h2 {
+            top: 60px;
+            font-size: 1.2em;
+        }
+        
+        .county {
+            stroke: #fff;
+            fill: #005DAA;
+        }
+        
+        .hover {
+            fill: yellow;
+        }
     </style>
 </head>
+
 <body>
-  
-<script>
-        
-   // custom JS goes here
- 
-</script>
-</body>
+
+    <body>
+        <h1>US Counties</h1>
+        <h2></h2>
+        <script>
+            // custom JS goes here
+
+            var width = 900
+                , height = 600;
+
+            var svg = d3.select("body") // select the document's body
+                .append("svg") // create and append a new svg element to it
+                .attr("width", width) // give the svg width
+                .attr("height", height); // give the svg height
+
+            var projection = d3.geo.albersUsa() // create a new d3 projection function, albers equal area
+                .scale(1000) // play with the scale until it's 'zoomed' about right
+                .translate([width / 2, height / 2]); // center the svg (0,0 is top, left)
+            var geoPath = d3.geo.path() //  create a new geo path generator
+                .projection(projection); // assign the project we just created to it
+
+            svg.append("g") // create and append a new SVG 'g' element to the svg
+                .selectAll("path") // selectAll the path features that haven't been created yet
+                .data(counties.features) // bind the GeoJSON features data to them
+                .enter() // prepare to
+                .append("path") // append the newly create path elements to the 'g'
+                .attr("d", geoPath) // define the screen coordinates of the new path(s)
+                .attr("class", "county") // give each a class name of 'county'
+                .on("mouseover", function (d) {
+                    d3.select("h2").text(d.properties.NAME + ' county');
+                    d3.select(this).attr("class", "county hover");
+                    console.log(d);
+                })
+                .on("mouseout", function (d) {
+                    d3.select("h2").text("");
+                    d3.select(this).attr("class", "county");
+                });
+        </script>
+    </body>
+
 </html>
