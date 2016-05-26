@@ -8,7 +8,12 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
 
-    <script src="us-counties.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/queue-async/1.0.7/queue.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+
+
 
     <style>
         h1,
@@ -38,8 +43,33 @@
             fill: #005DAA;
         }
         
+        .land {
+            fill: #d3d3d3;
+        }
+        
         .hover {
             fill: yellow;
+        }
+        
+        .emitter {
+            fill: yellow;
+            opacity: 0.5;
+        }
+        
+        .slider {
+            width: 300px;
+            margin-left: 223px;
+        }
+        
+        #emission-value {
+            margin-left: 223px;
+        }
+        
+        #map {
+            width: 900px;
+            height: 600px;
+            margin: 10px auto;
+            border: 1px solid #d3d3d3;
         }
     </style>
 </head>
@@ -47,41 +77,137 @@
 <body>
 
     <body>
+        <div id='map'></div>
         <h1>US Counties</h1>
         <h2></h2>
+        <input type="range" class="slider">
+        <div id="emission-value"></div>
+
         <script>
             // custom JS goes here
 
             var width = 900
                 , height = 600;
 
-            var svg = d3.select("body") // select the document's body
+
+            var svg = d3.select("#map") // select the document's body
                 .append("svg") // create and append a new svg element to it
                 .attr("width", width) // give the svg width
                 .attr("height", height); // give the svg height
 
-            var projection = d3.geo.albersUsa() // create a new d3 projection function, albers equal area
+            var projection = d3.geo.albers() // create a new d3 projection function, albers equal area
                 .scale(1000) // play with the scale until it's 'zoomed' about right
                 .translate([width / 2, height / 2]); // center the svg (0,0 is top, left)
+
             var geoPath = d3.geo.path() //  create a new geo path generator
                 .projection(projection); // assign the project we just created to it
 
-            svg.append("g") // create and append a new SVG 'g' element to the svg
-                .selectAll("path") // selectAll the path features that haven't been created yet
-                .data(counties.features) // bind the GeoJSON features data to them
-                .enter() // prepare to
-                .append("path") // append the newly create path elements to the 'g'
-                .attr("d", geoPath) // define the screen coordinates of the new path(s)
-                .attr("class", "county") // give each a class name of 'county'
-                .on("mouseover", function (d) {
-                    d3.select("h2").text(d.properties.NAME + ' county');
-                    d3.select(this).attr("class", "county hover");
-                    console.log(d);
-                })
-                .on("mouseout", function (d) {
-                    d3.select("h2").text("");
-                    d3.select(this).attr("class", "county");
-                });
+            queue()
+                .defer(d3.json, "https://dbartley.cartodb.com/api/v2/sql?format=GeoJSON&q=SELECT * FROM uninsured_adults_county")
+                .defer(d3.json, 'na_land_clipped.json')
+//                .defer(d3.csv, 'direct-emitters.csv')
+                .await(makeMap);
+
+
+            //                        .on("mouseover", function (d) {
+            //                                d3.select("h2").text(d.properties.NAME + ' county');
+            //                                d3.select(this).attr("class", "county hover");
+            //                                //                    console.log(d);
+            //                            })
+            //                            .on("mouseout", function (d) {
+            //                                d3.select("h2").text("");
+            //                                d3.select(this).attr("class", "county");
+            //                            });
+
+            function makeMap(error, counties, na) {
+
+//                var data = [];
+//
+//                emitters.forEach(function (emitter) {
+//                    data.push(Number(emitter.total_emissions));
+//                });
+//
+//                var min = Math.min.apply(Math, data)
+//                    , max = Math.max.apply(Math, data);
+//
+//                var radius = d3.scale.sqrt()
+//                    .domain([min, max])
+//                    .range([3, 20]);
+
+                svg.append("g") // create and append a new SVG 'g' element to the svg
+                    .selectAll("path") // selectAll the path features that haven't been created yet
+                    .data(na.features) // bind the GeoJSON features data to them
+                    .enter() // prepare to
+                    .append("path") // append the newly create path elements to the 'g'
+                    .attr("d", geoPath) // define the screen coordinates of the new path(s)
+                    .attr("class", "land") // give each a class name of 'county'
+
+
+                svg.append("g") // create and append a new SVG 'g' element to the svg
+                    .selectAll("path") // selectAll the path features that haven't been created yet
+                    .data(topojson.feature(counties, counties.objects.counties).features) // bind the GeoJSON features data to them
+                    .enter() // prepare to
+                    .append("path") // append the newly create path elements to the 'g'
+                    .attr("d", geoPath) // define the screen coordinates of the new path(s)
+                    .attr("class", "county") // give each a class name of 'county'
+
+                console.log(emitters);
+
+//                var facilities = svg.append("g")
+//                    .selectAll("circle")
+//                    .data(emitters)
+//                    .sort(function (a, b) {
+//                        return b.properties.total_emissions - a.properties.total_emissions;
+//                    })
+//                    .enter()
+//                    .append("circle")
+//                    .attr("cx", function (d) {
+//                        d.position = projection([d.lon, d.lat])
+//                        return d.position[0];
+//                    })
+//                    .attr("cy", function (d) {
+//                        return d.position[1];
+//                    })
+//                    .attr("r", function (d) {
+//                        return radius(d.total_emissions)
+//                    })
+//                    .attr("class", "emitter");
+//                var data = [];
+//
+//                emitters.forEach(function (emitter) {
+//                    data.push(Number(emitter.total_emissions));
+//                });
+//
+//                var min = Math.min.apply(Math, data)
+//                    , max = Math.max.apply(Math, data);
+//
+//
+//                var radius = d3.scale.sqrt()
+//                    .domain([min, max])
+//                    .range([3, 20]);
+//
+//                var output = d3.select('#emission-value').text(max.toLocaleString());
+//
+//                d3.select(".slider")
+//                    .attr("min", min)
+//                    .attr("max", max)
+//                    .attr("value", max)
+//                    .attr("step", (max - min) / 300)
+//                    .on("input", function () {
+//                        update(this.value);
+//                    });
+//
+//
+//                function update(val) {
+//                    output.text(Number(val).toLocaleString());
+//
+//                    facilities.attr("display", function (d) {
+//                        if (val <= Number(d.total_emissions)) {
+//                            return "none";
+//                        }
+//                    })
+//                };
+            };
         </script>
     </body>
 
