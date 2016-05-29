@@ -33,22 +33,42 @@ I would make a table detailing major road trips on highways I have taken during 
             
 I will use an existing [node.js script created by Winston Hearn](http://winstonhearn.com/gmaps-to-geojson/) that takes the origin and destination locations and sends it to the Google Directions API, and then translates the data into geoJSON format. I was not previously succesfully in getting a simular workflow to run through the Mapbox Directions API, and this library takes a large technical hurdle out of my map making process. 
 
-Note: I have forked this repository, and succesfully got it to run through Node.js in my command line. The code I have made is visible here:  Currently I am working on modifying it to run through each of the values in my csv table of trips I have taken. At this point I am running into problems with the loop not fully executing and the script only outputting a GeoJSON file for one of the trips at a time. On a personal note, this has been a great excercize in using command line, node.js, and NPM.
+Note: I have forked this repository, and succesfully got it to run through Node.js in my command line. The code I have made is visible here:  Currently I am working on modifying it to run through each of the values in my csv table of trips I have taken. At this point I am running into problems with the loop not fully executing and the script only outputting a GeoJSON file for one of the trips at a time. On the education side, this has been a great excercize in learning how to use command line, node.js, and NPM.
 
-I will write a script to loop through these TO and FROM values and append them to an Mapbox Directions API call, while storing the output in a library of geojson objects with the year and comments attribute appended as a geojson field. This would save a huge amount of time, as I could quickly build a table of all large road trips, feed it into the script, and then have a combined geoJSON file showing all the routes. I am guessing I will have 50-100 unique trips added to the table. I would assume that the route taken on the trip was the one that mapbox routing automatically gives me (which would in most cases be correct). If an out of the ordinary route was taken, I would break it up into the separate destinations required to make the trip route correctly. For example see above where the trip to Florida is routed through Memphis by breaking it into two segments to ensure that it does not take the default shorter route. It looks like the mapbox directions API does not work through Javascript, so I would loop through these values with a Bash script in the command line.
             
 
 ####Data Source 2: Open Street Map Data
-The second method of data capture would involve selecting the likely streets that I have traveled down while living in cities. This method would involve selecting an entire area of streets using data available from available layers in QGIS. For now I downloaded some generalized [Natural Earth road data](http://www.naturalearthdata.com/downloads/10m-cultural-vectors/roads/), and manually selected major roads in Vancouver and Colorado. I then added a year column and exported this to the roadssample.geojson file contained in this folder. I would do this with about 5 more urban areas that I have lived in. I wouldnt be precise to the point where I individually selected every single road one by one within a city since that would be way too time consuming. Grabbing the general mass of an urban road network should convey to the user locations where I spent a lot of time and likley travelled all major routes.
+The second method of data capture would involve selecting the likely streets that I have traveled down while living in cities.This method would involve selecting an entire area of streets using data available from available layers in QGIS. I will attempt to download [Mike Bostock's US Road Atlas](https://github.com/mbostock/us-atlas), run it through [Mapshaper](http://www.mapshaper.org/) to simplify the lines for reduced file size, and then edit the dataset in QGIS to pick out areas where I lived and travelled most of the main roads.
+
+For now I downloaded some generalized [Natural Earth road data](http://www.naturalearthdata.com/downloads/10m-cultural-vectors/roads/), and manually selected major roads in Vancouver and Colorado. I then added a year column and exported this to the GeoJSON file contained in this folder. I would do this with about 5 more urban areas that I have lived in. I wouldnt be precise to the point where I individually selected every single road one by one within a city since that would be way too time consuming. Grabbing the general mass of an urban road network should convey to the user locations where I spent a lot of time and likley travelled all major routes.
+
+
 
     
     
 #new this week
 
 #identification of anticipate thematic representation (e.g., dot map, choropleth, prop symbols, etc)
+
+This map will use vector lines to represent roads I have travelled. I will also incorporate points where certain events or incidents occoured that I would like to draw to the users attention to. The lines and points will be always visible, but a slider menu at the bottom of the map will highlight the lines and point associated with the current slider year. This way all of the data is presented at the same time, but dragging the slider can easily show where I have been at certain times in life. 
+
 #a content and requirements list (see Module 05)
+
+Required content is as follows:
+-Individual long distance road trips I have taken
+-Specific places or stories I want to describe as points of interest on the map
+-Clusters of roads I have travelled down in places I have lived/visited
+-Comments about each road trip line file and place cluster to provide a story an context
+-Photos I have from selected locations and road trips
+
+
 #description of the anticipated user interaction (UI)
+Anticipated user interaction will come from moving a cursor over the map to display popups with additional text stories and images from road trips, adjusting the slider bar to highlight which roads I travelled in certain years, and panning/zooming the map content.
+
 #a series of low fidelity wireframes, paper prototypes, or mockups (in addition to the 1-2 pages)
+
+
+
 
 
 
