@@ -2,7 +2,7 @@ FROM,TO,YEAR,COMMENT
 Longmont CO,Memphis TN,1999,My family took a summer road trip to florida to visit friends in Ft Lauderdale and to go to Disney Land
 Memphis TN,Ft Lauderdale FL,1999,My family took a summer road trip to florida to visit friends in Ft Lauderdale and to go to Disney Land
 Ft Lauderdale FL,Cape Canaveral,1999,One of the side trips on our Florida trip included watching a rocket take off in Cape Canaveral
-Denver CO,Los Angeles CA,2000,Family road trip to California to attend a cousin's wedding
+Denver CO,Los Angeles CA,2000,Family road trip to California to attend a cousins wedding
 Los Angeles CA,Orange CA,2000,We took a side trip to Orange California to visit the famous Vans skatepark
 Longmont CO,Moab UT,1998,5th Grade class trip to Moab Utah to whitewater raft and camp in the desert
 Anchorage AK,Whitehorse YT,2010,Bus ride from Anchorage to Whitehorse to camp with best friends from University
@@ -10,3 +10,24 @@ Longmont CO,Vancouver BC,2005,My dad and I drove to Vancouver for my first semes
 Vancouver BC,Williams Lake BC,2008,I moved to Williams lake for a summer internship with the BC Forest Service
 Vancouver BC,Nelson BC,2009,I moved to Nelson for another summer internship with the BC Forest Service
 King Salmon AK,Naknek AK,2010,King Salmon is where i worked for a summer with the National Park service. King Salmon is not connected to the North American road network. The only other city you can drive to is Naknek
+Vancouver BC,Twin Falls ID,2010,In early 2010 I finished school in Vancouver and drove with my two friends back to Denver. We stopped in Idaho - visited the Salt Flats - and camped in Moab Utah
+Twin Falls ID,Salt Lake City UT,2010,In early 2010 I finished school in Vancouver and drove with my two friends back to Denver. We stopped in Idaho - visited the Salt Flats - and camped in Moab Utah
+Salt Lake City UT,Moab UT,2010,In early 2010 I finished school in Vancouver and drove with my two friends back to Denver. We stopped in Idaho - visited the Salt Flats - and camped in Moab Utah
+Moab UT,Denver CO,2010,In early 2010 I finished school in Vancouver and drove with my two friends back to Denver. We stopped in Idaho - visited the Salt Flats - and camped in Moab Utah
+Longmont CO,Edmonton AB,2012,In 2012 I left Denver CO with all of my belongings and moved to Edmonton AB to start work at Paragon Soil
+Edmonton AB,Nelson BC,2012,While waiting to hear about if I had received a job in Edmonton I drove to visit friends in Nelson BC and Vancouver BC
+Nelson BC,Vancouver BC,2012,While waiting to hear about if I had received a job in Edmonton I drove to visit friends in Nelson BC and Vancouver BC
+Edmonton AB,Kamloops BC,2013,I went to visit my friend Karl in Vancouver in 2013 and we did a camping trip on Vancouver Island
+Kamloops BC,Vancouver BC,2013,I went to visit my friend Karl in Vancouver in 2013 and we did a camping trip on Vancouver Island
+Vancouver BC,Nanaimo BC,2013,I went to visit my friend Karl in Vancouver in 2013 and we did a camping trip on Vancouver Island
+Nanaimo BC,Tofino BC,2013,I went to visit my friend Karl in Vancouver in 2013 and we did a camping trip on Vancouver Island
+Tofino BC,Cortez Island BC,2013,On our camping trip we visited our friend Whitney on Cortez. The whole trip it rained and was miserable for camping
+Edmonton AB,Dawson City YT,2012,Drove to Dawson City YT to visit friend Whitney in my station wagon. On the way home picked up a french canadian hitchiker and gave him a 3 day ride back to Edmonton. Everytime we stopped for the night I slept in my car and he slept in his tent off the side of the highway.
+Williams Lake BC,Bella Coola BC,2008,While living in Williams Lake I drove out to Bella Coola to go hiking with my friend Daniel
+Williams Lake BC,Smithers BC,2008,My friend Nik and met in Prince George made cow-heart beef jerky in Burns Lake and then went to a folk music festival in Smithers
+Williams Lake BC,Barkersville BC,2008,In 2008 my parents visited me in Williams Lake. We camped in the Barkersville area for the weekend.
+Edmonton AB,Q'appelle SK,2014,Paragon had me drive an F250 truck from Edmonton to a pipeline job in Toronto. It was my first cross canadian journey.
+Q'appelle SK,Winnipeg MB,2014,Paragon had me drive an F250 truck from Edmonton to a pipeline job in Toronto. It was my first cross canadian journey.
+Winnipeg MB,Wawa ON,2014,Paragon had me drive an F250 truck from Edmonton to a pipeline job in Toronto. It was my first cross canadian journey.
+Wawa ON,Toronto ON,2014,Paragon had me drive an F250 truck from Edmonton to a pipeline job in Toronto. It was my first cross canadian journey.
+Denver CO,Springfield MO,2001,My family often drove to Springfield MO to visit our Grandma Bessie
