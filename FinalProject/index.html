@@ -4,9 +4,16 @@
     <meta charset="utf-8">
     <title>Roads I've Travelled</title>
 
-        <script src='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
+
+    <script src='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
     <link href='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css' rel='stylesheet' />
-    
+
+    <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+
+
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet' type='text/css'>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
@@ -22,7 +29,7 @@
 
     <script src="//d3js.org/d3.v3.min.js"></script>
     <script src="d3.geo.tile.min.js"></script>
-    
+
     <script src="routes.geojson" type="text/javascript"></script>
 
     <style>
@@ -44,56 +51,28 @@
             width: 100%;
         }
         
-        #ui-slider {
+        #ui-controls {
             position: absolute;
-            bottom: 20px;
-            left: 36%;
-            width: 200px;
-            padding: 8px 15px 4px;
-            background: #1C9976;
-            border-radius: 3px;
+            bottom: 3%;
+            width: 90%;
+            padding: 8px 15px 8px 15px;
+            background: rgba(75, 75, 75, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
             color: whitesmoke;
         }
+        /*        add the year-slider element*/
         
-        .slider {
+        .year-slider {
             width: 100%;
         }
         
-        #grade {
-            position: absolute;
-            bottom: 60px;
-            left: 36%;
-            padding: 6px 15px 8px;
-            background: whitesmoke;
-            border: 2px solid #1C9976;
-            padding: 6px 15px 8px;
-            border-radius: 3px;
-            color: #1C9976;
-            font-size: 1em;
+        #ui-controls .min {
+            float: left;
         }
         
-        #grade span {
-            font-size: 1.3em;
-            font-weight: 500;
-        }
-        
-        #legend {
-            position: absolute;
-            right: 15px;
-            bottom: 20px;
-            padding: 8px 15px;
-            background: whitesmoke;
-            border: 2px solid #1C9976;
-            border-radius: 3px;
-            color: #1C9976;
-            width: 160px;
-            height: 220px;
-        }
-        
-        #legend h3 {
-            text-align: right;
-            font-weight: 500;
-            margin: 10px 0 20px;
+        #ui-controls .max {
+            float: right;
         }
         
         #info {
@@ -177,26 +156,151 @@
         <div id='map'></div>
         <div id='side-panel'>
 
+
+
+
+
             <h1>Roads I've Travelled</h1>
             <h2>Use Scroll bar to see more</h2>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam mollis laoreet elementum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec mi eros, rutrum sed orci eget, venenatis varius est. Pellentesque accumsan est vitae risus malesuada fringilla.</p>
             <p>Cras at massa in leo aliquam fermentum. Nunc auctor vestibulum sagittis. Aliquam pulvinar, ipsum in pulvinar tincidunt, enim metus fermentum tellus, quis accumsan ex lorem ut ante. Phasellus fermentum orci eget interdum ultrices. Proin vitae magna id odio ultricies placerat quis id ex. Aenean volutpat volutpat gravida.</p>
             <p>Cras at massa in leo aliquam fermentum. Nunc auctor vestibulum sagittis. Aliquam pulvinar, ipsum in pulvinar tincidunt, enim metus fermentum tellus, quis accumsan ex lorem ut ante. Phasellus fermentum orci eget interdum ultrices. Proin vitae magna id odio ultricies placerat quis id ex. Aenean volutpat volutpat gravida.</p>
             <p>Cras at massa in leo aliquam fermentum. Nunc auctor vestibulum sagittis. Aliquam pulvinar, ipsum in pulvinar tincidunt, enim metus fermentum tellus, quis accumsan ex lorem ut ante. Phasellus fermentum orci eget interdum ultrices. Proin vitae magna id odio ultricies placerat quis id ex. Aenean volutpat volutpat gravida.</p>
-        </div>
-        <script>
-            // Make a leaflet map with data here (including popups)
 
-            L.mapbox.accessToken = 'pk.eyJ1IjoiZGJhcnRsZXkiLCJhIjoiOS1tNWVNbyJ9.n5r_NhVqnGPcoZvImw7kgw';
+            <div id='ui-controls'>
+                <label>
+
+                    <span class="min">1986</span><span class="max">2016</span>
+                    <input type="range" min="2000" , max="2013" , value="2000" , step="1" , class="year-slider">
+                </label>
+            </div>
+        </div>
+
+
+        <script>
+            var attribute = "1999"
+
+            var labels = {
+                    "YEAR": "YEAR"
+                    , "2000": "2000"
+                    , "2001": "2001"
+                    , "2002": "2002"
+                    , "2003": "2003"
+                    , "2004": "2004"
+                    , "2005": "2005"
+                    , "2006": "2006"
+                    , "2007": "2007"
+                    , "2008": "2008"
+                    , "2009": "2009"
+                    , "2010": "2010"
+                    , "2011": "2011"
+                    , "2012": "2012"
+                    , "2013": "2013"
+                }
+                // Make a leaflet map with data here (including popups)
 
             //            use mapbox to load a map with the mapbox light background with predefined center and zoom
-            var map = L.mapbox.map('map', 'mapbox.light')
-                .setView([39, -85], 4);
-            
-            L.geoJson(routes).addTo(map);
-            
-            // add slider bar
-            // update csv content
+            var options = {
+                center: [37.6, -85.3]
+                , zoom: 4
+                , dragging: true
+                , zoomControl: true
+            }
+            var map = L.map('map', options);
+
+            // load map tiles and add to map
+            //            var CartoDB_DarkMatter = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+            //                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
+            //                , subdomains: 'abcd'
+            //                , maxZoom: 19
+            //            }).addTo(map);
+            //            L.geoJson(routes).addTo(map);
+
+            var MapQuestOpen_OSM = L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/{type}/{z}/{x}/{y}.{ext}', {
+                type: 'map'
+                , ext: 'jpg'
+                , attribution: 'Tiles Courtesy of <a href="http://www.mapquest.com/">MapQuest</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                , subdomains: '1234'
+            }).addTo(map);
+
+
+
+            var myStyle = {
+                "color": "#ff7800"
+                , "weight": 5
+                , "opacity": 0.65
+            };
+
+            L.geoJson(myLines, {
+                style: myStyle
+            }).addTo(map);
+
+
+//            L.geoJson(routes, {
+//                color: 'black'
+//                , opacity: 1
+//            }).addTo(map);
+
+            routes.setStyle({
+                color: 'whitesmoke'
+            });
+
+
+            console.log(routes.features);
+            //            console.log(routes.features.length);
+            for (i = 0; i < routes.features.length; i++) {
+                console.log(routes.features[i].properties.year);
+                console.log(attribute);
+                if (routes.features[i].properties.year === attribute) {
+                    console.log("equals!!");
+                } else {
+                    console.log("nope!");
+                };
+            };
+
+            //!!!add slider bar
+
+            createSliderUI();
+
+            function createSliderUI() {
+                // create a Leaflet control object and store a reference to it in a variable
+                var sliderControl = L.control({
+                    position: 'bottom'
+                });
+
+                sliderControl.onAdd = function (map) {
+
+                    // select an existing DOM element with an id of "ui-controls"
+                    var slider = L.DomUtil.get("ui-controls");
+
+                    // when the user clicks on the slider element
+                    L.DomEvent.addListener(slider, 'mousedown', function (e) {
+
+                        // prevent the click event from bubbling up to the map, this means when you click and move the slider it wont also drag the leaflet map around
+                        L.DomEvent.stopPropagation(e);
+
+                    });
+
+                    // return the slider from the onAdd method
+                    return slider;
+                }
+
+                // add the control object containing our slider element to the map
+                //                sliderControl.addTo(map);
+
+                //select the year-slider form element
+                $(".year-slider")
+                    //            when the slider is changed, call a function that updates the attribute value to the current year position, and then run the update map function to generate the map and legend again
+                    .on("input change", function () {
+                        attribute = $(this).val();
+                        console.log(attribute);
+                        //                        updateMap();
+                    });
+
+            }
+            //!!!update csv content
+
+            //!!!add mouse over labels (or update side bar)
         </script>
     </body>
 
