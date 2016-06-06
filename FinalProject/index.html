@@ -31,6 +31,7 @@
     <script src="d3.geo.tile.min.js"></script>
 
     <script src="routes.geojson" type="text/javascript"></script>
+    <script src="roadssample.geojson" type = "text/javascript"></script>
 
     <style>
         body {
@@ -122,7 +123,7 @@
         h2 {
             margin: 0;
             padding: 8px 25px 8px 15px;
-            color: #f2b632;
+            color: #626e60;
             font-weight: 700;
             font-size: 1.2em;
             text-align: right;
@@ -158,16 +159,14 @@
         <div id='side-panel'>
 
 
-
-
-
             <h1>Roads I've Travelled</h1>
-            <h2>Use Scroll bar to see more</h2>
+            <h2>An interactive web map</h2>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam mollis laoreet elementum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec mi eros, rutrum sed orci eget, venenatis varius est. Pellentesque accumsan est vitae risus malesuada fringilla.</p>
             <p>Cras at massa in leo aliquam fermentum. Nunc auctor vestibulum sagittis. Aliquam pulvinar, ipsum in pulvinar tincidunt, enim metus fermentum tellus, quis accumsan ex lorem ut ante. Phasellus fermentum orci eget interdum ultrices. Proin vitae magna id odio ultricies placerat quis id ex. Aenean volutpat volutpat gravida.</p>
             <p>Cras at massa in leo aliquam fermentum. Nunc auctor vestibulum sagittis. Aliquam pulvinar, ipsum in pulvinar tincidunt, enim metus fermentum tellus, quis accumsan ex lorem ut ante. Phasellus fermentum orci eget interdum ultrices. Proin vitae magna id odio ultricies placerat quis id ex. Aenean volutpat volutpat gravida.</p>
             <p>Cras at massa in leo aliquam fermentum. Nunc auctor vestibulum sagittis. Aliquam pulvinar, ipsum in pulvinar tincidunt, enim metus fermentum tellus, quis accumsan ex lorem ut ante. Phasellus fermentum orci eget interdum ultrices. Proin vitae magna id odio ultricies placerat quis id ex. Aenean volutpat volutpat gravida.</p>
 
+<!--            need to add a info box here that shows the current highlighted year-->
             <div id='ui-controls'>
                 <label>
 
@@ -179,44 +178,36 @@
 
 
         <script>
-            var attribute = "1999"
+            var attribute = "1986" // set a default attribute where the slider starts
 
-            var labels = {
-                    "YEAR": "YEAR"
-                    , "2000": "2000"
-                    , "2001": "2001"
-                    , "2002": "2002"
-                    , "2003": "2003"
-                    , "2004": "2004"
-                    , "2005": "2005"
-                    , "2006": "2006"
-                    , "2007": "2007"
-                    , "2008": "2008"
-                    , "2009": "2009"
-                    , "2010": "2010"
-                    , "2011": "2011"
-                    , "2012": "2012"
-                    , "2013": "2013"
-                }
+//            var labels = {
+//                    "YEAR": "YEAR"
+//                    , "2000": "2000"
+//                    , "2001": "2001"
+//                    , "2002": "2002"
+//                    , "2003": "2003"
+//                    , "2004": "2004"
+//                    , "2005": "2005"
+//                    , "2006": "2006"
+//                    , "2007": "2007"
+//                    , "2008": "2008"
+//                    , "2009": "2009"
+//                    , "2010": "2010"
+//                    , "2011": "2011"
+//                    , "2012": "2012"
+//                    , "2013": "2013"
+//                }
                 // Make a leaflet map with data here (including popups)
 
-            //            use mapbox to load a map with the mapbox light background with predefined center and zoom
             var options = {
                 center: [37.6, -85.3]
                 , zoom: 4
                 , dragging: true
                 , zoomControl: true
             }
-            var map = L.map('map', options);
-
-            // load map tiles and add to map
-            //            var CartoDB_DarkMatter = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
-            //                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
-            //                , subdomains: 'abcd'
-            //                , maxZoom: 19
-            //            }).addTo(map);
-            //            L.geoJson(routes).addTo(map);
-
+            var map = L.map('map', options);            
+            
+            // would prefer to use the mapbox base layer
             var MapQuestOpen_OSM = L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/{type}/{z}/{x}/{y}.{ext}', {
                 type: 'map'
                 , ext: 'jpg'
@@ -248,49 +239,65 @@
 
             
 
+            
             function drawfeatures() {
-                
+                // Need a clear style function here. Maybe use the resetStyle() function if it can be figured out.
 
                 L.geoJson(routes, {
 
+//                    Set the style based on the slider so that the current year is highlighted. This needs to be updated so that the highlighted features are brought to the front.
                     style: function (feature) {
-                        //                        console.log(feature.properties.year);
                         if (feature.properties.year === attribute) {
                             return {
                                 color: 'yellow'
                                 , opacity: 1
                             }
-                            feature.bringToFront();
+                            feature.bringToFront(); // this doesnt work but its a good idea
                             ;
                         } else {
                             return {
                                 color: 'black'
                                 , opacity: 1
                             };
-                            feature.bringToBack();
+                            feature.bringToBack(); // this doesnt work but its a good idea
                         };    
                     }
                 
                 }).addTo(map);
+
+//                Do the same as above for the second dataset. This doesnt appear to be working correctly.
+                L.geoJson(roadssample, {
+
+//                    Set the style based on the slider so that the current year is highlighted. This needs to be updated so that the highlighted features are brought to the front.
+//                    The roadssample dataset needs to be edited
+                    style: function (feature) {
+                        if (feature.properties.Year === attribute) {
+                            return {
+                                color: 'yellow'
+                                , opacity: 1
+                                , weight: 1.5
+                            }
+                            feature.bringToFront(); // this doesnt work but its a good idea
+                            ;
+                        } else {
+                            return {
+                                color: 'black'
+                                , opacity: 1
+                                , weight: 1.5
+                            };
+                            feature.bringToBack(); // this doesnt work but its a good idea
+                        };    
+                    }
                 
+                }).addTo(map);
 
+                
+                
+//                need to add a mouseover listener here to show information about trips that are being hovered over
+                
             };
 
-
-
-            //            console.log(routes.features);
-            //            console.log(routes.features.length);
-            for (i = 0; i < routes.features.length; i++) {
-                //                console.log(routes.features[i].properties.year);
-                //                console.log(attribute);
-                if (routes.features[i].properties.year === attribute) {
-                    //                    console.log("equals!!");
-
-
-                } else {
-                    //                    console.log("nope!");
-                };
-            };
+            
 
             //!!!add slider bar
 
@@ -331,6 +338,7 @@
                         attribute = $(this).val();
                         console.log(attribute);
                         //                        updateMap();
+                        
                         drawfeatures();
 
                     });
