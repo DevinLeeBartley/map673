@@ -135,6 +135,7 @@
             text-align: right;
             font-size: 1em;
             font-weight: 400;
+            bottom: 5%;
         }
         
         #side-panel p:after {
@@ -224,43 +225,77 @@
             }).addTo(map);
 
 
+            //            var myLayer = L.geoJson().addTo(map);
+            //            myLayer.addData(routes, {
+            //                style: myStyle
+            //            });
 
             var myStyle = {
-                "color": "#ff7800"
-                , "weight": 5
-                , "opacity": 0.65
+                "color": 'black'
+                , "weight": 2
+                , "opacity": 1
             };
 
-            L.geoJson(myLines, {
-                style: myStyle
-            }).addTo(map);
+            var highlightedStyle = {
+                "color": 'yellow'
+                , "weight": 1
+                , "opacity": 1
+            }
+
+            //            L.geoJson(routes, {
+            //                style: myStyle
+            //            }).addTo(map);
+
+            
+
+            function drawfeatures() {
+                
+
+                L.geoJson(routes, {
+
+                    style: function (feature) {
+                        //                        console.log(feature.properties.year);
+                        if (feature.properties.year === attribute) {
+                            return {
+                                color: 'yellow'
+                                , opacity: 1
+                            }
+                            feature.bringToFront();
+                            ;
+                        } else {
+                            return {
+                                color: 'black'
+                                , opacity: 1
+                            };
+                            feature.bringToBack();
+                        };    
+                    }
+                
+                }).addTo(map);
+                
+
+            };
 
 
-//            L.geoJson(routes, {
-//                color: 'black'
-//                , opacity: 1
-//            }).addTo(map);
 
-            routes.setStyle({
-                color: 'whitesmoke'
-            });
-
-
-            console.log(routes.features);
+            //            console.log(routes.features);
             //            console.log(routes.features.length);
             for (i = 0; i < routes.features.length; i++) {
-                console.log(routes.features[i].properties.year);
-                console.log(attribute);
+                //                console.log(routes.features[i].properties.year);
+                //                console.log(attribute);
                 if (routes.features[i].properties.year === attribute) {
-                    console.log("equals!!");
+                    //                    console.log("equals!!");
+
+
                 } else {
-                    console.log("nope!");
+                    //                    console.log("nope!");
                 };
             };
 
             //!!!add slider bar
 
             createSliderUI();
+            drawfeatures();
 
             function createSliderUI() {
                 // create a Leaflet control object and store a reference to it in a variable
@@ -292,9 +327,12 @@
                 $(".year-slider")
                     //            when the slider is changed, call a function that updates the attribute value to the current year position, and then run the update map function to generate the map and legend again
                     .on("input change", function () {
+                        
                         attribute = $(this).val();
                         console.log(attribute);
                         //                        updateMap();
+                        drawfeatures();
+
                     });
 
             }
