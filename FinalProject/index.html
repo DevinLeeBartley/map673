@@ -12,6 +12,7 @@
 
 
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+
     <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
 
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet' type='text/css'>
@@ -31,7 +32,7 @@
     <script src="d3.geo.tile.min.js"></script>
 
     <script src="routes.geojson" type="text/javascript"></script>
-    <script src="roadssample.geojson" type = "text/javascript"></script>
+    <script src="roadssample.geojson" type="text/javascript"></script>
 
     <style>
         body {
@@ -43,6 +44,15 @@
             width: 67%;
             background: whitesmoke;
             font-family: "Robato", sans-serif;
+        }
+        
+        .info {
+            padding: 6px 8px;
+            font-size: 1em;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            text-align: right;
         }
         
         #map {
@@ -157,6 +167,8 @@
     <body>
         <div id='map'></div>
         <div id='side-panel'>
+            
+        <div id='info'></div>
 
 
             <h1>Roads I've Travelled</h1>
@@ -166,12 +178,12 @@
             <p>Cras at massa in leo aliquam fermentum. Nunc auctor vestibulum sagittis. Aliquam pulvinar, ipsum in pulvinar tincidunt, enim metus fermentum tellus, quis accumsan ex lorem ut ante. Phasellus fermentum orci eget interdum ultrices. Proin vitae magna id odio ultricies placerat quis id ex. Aenean volutpat volutpat gravida.</p>
             <p>Cras at massa in leo aliquam fermentum. Nunc auctor vestibulum sagittis. Aliquam pulvinar, ipsum in pulvinar tincidunt, enim metus fermentum tellus, quis accumsan ex lorem ut ante. Phasellus fermentum orci eget interdum ultrices. Proin vitae magna id odio ultricies placerat quis id ex. Aenean volutpat volutpat gravida.</p>
 
-<!--            need to add a info box here that shows the current highlighted year-->
+            <!--            need to add a info box here that shows the current highlighted year-->
             <div id='ui-controls'>
                 <label>
 
                     <span class="min">1986</span><span class="max">2016</span>
-                    <input type="range" min="2000" , max="2013" , value="2000" , step="1" , class="year-slider">
+                    <input type="range" min="1986" , max="2016" , value="1986" , step="1" , class="year-slider">
                 </label>
             </div>
         </div>
@@ -180,24 +192,24 @@
         <script>
             var attribute = "1986" // set a default attribute where the slider starts
 
-//            var labels = {
-//                    "YEAR": "YEAR"
-//                    , "2000": "2000"
-//                    , "2001": "2001"
-//                    , "2002": "2002"
-//                    , "2003": "2003"
-//                    , "2004": "2004"
-//                    , "2005": "2005"
-//                    , "2006": "2006"
-//                    , "2007": "2007"
-//                    , "2008": "2008"
-//                    , "2009": "2009"
-//                    , "2010": "2010"
-//                    , "2011": "2011"
-//                    , "2012": "2012"
-//                    , "2013": "2013"
-//                }
-                // Make a leaflet map with data here (including popups)
+            //            var labels = {
+            //                    "YEAR": "YEAR"
+            //                    , "2000": "2000"
+            //                    , "2001": "2001"
+            //                    , "2002": "2002"
+            //                    , "2003": "2003"
+            //                    , "2004": "2004"
+            //                    , "2005": "2005"
+            //                    , "2006": "2006"
+            //                    , "2007": "2007"
+            //                    , "2008": "2008"
+            //                    , "2009": "2009"
+            //                    , "2010": "2010"
+            //                    , "2011": "2011"
+            //                    , "2012": "2012"
+            //                    , "2013": "2013"
+            //                }
+            // Make a leaflet map with data here (including popups)
 
             var options = {
                 center: [37.6, -85.3]
@@ -205,8 +217,8 @@
                 , dragging: true
                 , zoomControl: true
             }
-            var map = L.map('map', options);            
-            
+            var map = L.map('map', options);
+
             // would prefer to use the mapbox base layer
             var MapQuestOpen_OSM = L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/{type}/{z}/{x}/{y}.{ext}', {
                 type: 'map'
@@ -237,39 +249,60 @@
             //                style: myStyle
             //            }).addTo(map);
 
-            
 
-            
+            var dataLayer, attribute = "year";
+
+
             function drawfeatures() {
                 // Need a clear style function here. Maybe use the resetStyle() function if it can be figured out.
 
-                L.geoJson(routes, {
+                dataLayer = L.geoJson(routes, {
 
-//                    Set the style based on the slider so that the current year is highlighted. This needs to be updated so that the highlighted features are brought to the front.
+
+
+                    //                    Set the style based on the slider so that the current year is highlighted. This needs to be updated so that the highlighted features are brought to the front.
                     style: function (feature) {
                         if (feature.properties.year === attribute) {
+
                             return {
                                 color: 'yellow'
                                 , opacity: 1
                             }
-                            feature.bringToFront(); // this doesnt work but its a good idea
-                            ;
+                            //                            dataLayer.eachLayer(function (layer) {
+
+                            //                                            layer.setStyle({
+                            //                                                color: 'red'
+                            //                                                , opacity: 1
+                            //                                            })
+
+                            //                                        })
+
+                            dataLayer.bringToFront(); // this doesnt work but its a good idea
+
                         } else {
+
+                            //                                    dataLayer.eachLayer(function (layer) {
+                            //
+                            //                                            layer.setStyle({
+                            //                                                color: 'red'
+                            //                                                , opacity: 1
+                            //                                            })
+
                             return {
                                 color: 'black'
                                 , opacity: 1
                             };
-                            feature.bringToFront(); // this doesnt work but its a good idea
-                        };    
+                            dataLayer.bringToFront(); // this doesnt work but its a good idea
+                        };
                     }
-                
+
                 }).addTo(map);
 
-//                Do the same as above for the second dataset. This doesnt appear to be working correctly.
-                L.geoJson(roadssample, {
+                //                Do the same as above for the second dataset. This doesnt appear to be working correctly.
+                dataLayer2 = L.geoJson(roadssample, {
 
-//                    Set the style based on the slider so that the current year is highlighted. This needs to be updated so that the highlighted features are brought to the front.
-//                    The roadssample dataset needs to be edited
+                    //                    Set the style based on the slider so that the current year is highlighted. This needs to be updated so that the highlighted features are brought to the front.
+                    //                    The roadssample dataset needs to be edited
                     style: function (feature) {
                         if (feature.properties.Year === attribute) {
                             return {
@@ -277,7 +310,7 @@
                                 , opacity: 1
                                 , weight: 1.5
                             }
-                            feature.bringToFront(); // this doesnt work but its a good idea
+                            dataLayer.bringToFront(); // this doesnt work but its a good idea
                             ;
                         } else {
                             return {
@@ -285,19 +318,23 @@
                                 , opacity: 1
                                 , weight: 1.5
                             };
-                            feature.bringToFront(); // this doesnt work but its a good idea
-                        };    
+                            //                            this.bringToFront(); // this doesnt work but its a good idea
+                        };
                     }
-                
+
                 }).addTo(map);
 
-                
-                
-//                need to add a mouseover listener here to show information about trips that are being hovered over
-                
+
+                drawInfo();
+
+
+                //                need to add a mouseover listener here to show information about trips that are being hovered over
+
+
+
             };
 
-            
+
 
             //!!!add slider bar
 
@@ -334,16 +371,70 @@
                 $(".year-slider")
                     //            when the slider is changed, call a function that updates the attribute value to the current year position, and then run the update map function to generate the map and legend again
                     .on("input change", function () {
-                        
+
                         attribute = $(this).val();
                         console.log(attribute);
                         //                        updateMap();
-                        
+
                         drawfeatures();
 
                     });
 
             }
+
+            function drawInfo() {
+                var info = L.control({
+                    position: 'topright'
+                });
+
+                info.onAdd = function (map) {
+                    var div = L.DomUtil.create('div', 'info')
+                    return div;
+                };
+
+
+                info.addTo(map);
+                $(".info").hide();
+
+                dataLayer.eachLayer(function (layer) {
+                    layer.on('mouseover', function () {
+                        updateInfo(this);// info isnt working
+                        console.log(this);
+
+                        //                    set the style on mouseover to show a yellow outline
+                        this.setStyle({
+                            color: 'yellow'
+                            , weight: 3
+                            , opacity: 0.9
+                        })
+
+                    });
+
+                })
+
+            }
+
+            function updateInfo(feature) {
+                var props = feature.properties;
+
+
+//                dataLayer.on('mouseover')
+//                    , function () {
+//                        //                    updateInfo(this);
+//
+//                        console.log(dataLayer); // why isnt this working?
+//                        this.setStyle({
+//                            color: 'yellow'
+//                            , weight: 3
+//                            , opacity: 0.9
+//                        })
+//                    }
+
+            }
+
+
+
+
             //!!!update csv content
 
             //!!!add mouse over labels (or update side bar)
