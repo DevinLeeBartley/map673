@@ -46,20 +46,24 @@
             font-family: "Robato", sans-serif;
         }
         
-        .info {
-            padding: 6px 8px;
-            font-size: 1em;
-            background: rgba(255, 255, 255, 0.8);
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-            border-radius: 5px;
-            text-align: right;
-        }
-        
         #map {
             position: absolute;
             top: 0;
             bottom: 0;
             width: 100%;
+        }
+        
+        .info {
+            padding: 6px 8px;
+            font-size: 1em;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 25px;
+            text-align: right;
+        }
+        
+        .info h3{
+            margin: 0;
         }
         
         #ui-controls {
@@ -85,7 +89,7 @@
         #ui-controls .max {
             float: right;
         }
-        
+        /*
         #info {
             padding: 8px 15px;
             background: whitesmoke;
@@ -108,6 +112,7 @@
             font-size: 1.3em;
             font-weight: 500;
         }
+*/
         
         #side-panel {
             position: absolute;
@@ -167,8 +172,8 @@
     <body>
         <div id='map'></div>
         <div id='side-panel'>
-            
-        <div id='info'></div>
+
+            <div id='info'></div>
 
 
             <h1>Roads I've Travelled</h1>
@@ -258,70 +263,27 @@
 
                 dataLayer = L.geoJson(routes, {
 
-
-
                     //                    Set the style based on the slider so that the current year is highlighted. This needs to be updated so that the highlighted features are brought to the front.
                     style: function (feature) {
-                        if (feature.properties.year === attribute) {
-
-                            return {
-                                color: 'yellow'
-                                , opacity: 1
-                            }
-                            //                            dataLayer.eachLayer(function (layer) {
-
-                            //                                            layer.setStyle({
-                            //                                                color: 'red'
-                            //                                                , opacity: 1
-                            //                                            })
-
-                            //                                        })
-
-                            dataLayer.bringToFront(); // this doesnt work but its a good idea
-
-                        } else {
-
-                            //                                    dataLayer.eachLayer(function (layer) {
-                            //
-                            //                                            layer.setStyle({
-                            //                                                color: 'red'
-                            //                                                , opacity: 1
-                            //                                            })
 
                             return {
                                 color: 'black'
                                 , opacity: 1
+                                , weight: 2
                             };
-                            dataLayer.bringToFront(); // this doesnt work but its a good idea
-                        };
-                    }
-
-                }).addTo(map);
+//                            dataLayer.bringToFront(); // this doesnt work but its a good idea
+                        }
+                    }).addTo(map);
 
                 //                Do the same as above for the second dataset. This doesnt appear to be working correctly.
                 dataLayer2 = L.geoJson(roadssample, {
-
-                    //                    Set the style based on the slider so that the current year is highlighted. This needs to be updated so that the highlighted features are brought to the front.
-                    //                    The roadssample dataset needs to be edited
                     style: function (feature) {
-                        if (feature.properties.Year === attribute) {
-                            return {
-                                color: 'yellow'
-                                , opacity: 1
-                                , weight: 1.5
-                            }
-                            dataLayer.bringToFront(); // this doesnt work but its a good idea
-                            ;
-                        } else {
-                            return {
-                                color: 'black'
-                                , opacity: 1
-                                , weight: 1.5
-                            };
-                            //                            this.bringToFront(); // this doesnt work but its a good idea
-                        };
+                        return {
+                            color: 'black'
+                            , opacity: 1
+                            , weight: 2
+                        }
                     }
-
                 }).addTo(map);
 
 
@@ -333,13 +295,42 @@
 
 
             };
+            
+            function changeStyle() {
+                
+                dataLayer.eachLayer(function (layer) {
+                    console.log(layer.feature.properties.year);
+                    
+                    if (layer.feature.properties.year ===  attribute) { 
+                        layer.setStyle({
+                            color: 'yellow'
+                            , weight: 2
+                            , opacity: 1
+                        })
+                        layer.bringToFront();
+                } else {
+                        layer.setStyle({
+                            color: 'black'
+                            , weight: 2
+                            , opacity: 1
+                        })
+                                    
+                                    }
 
+                    });
+                
+            };
+
+            
 
 
             //!!!add slider bar
-
-            createSliderUI();
+            
             drawfeatures();
+            createSliderUI();
+
+            
+        
 
             function createSliderUI() {
                 // create a Leaflet control object and store a reference to it in a variable
@@ -374,9 +365,10 @@
 
                         attribute = $(this).val();
                         console.log(attribute);
+                        changeStyle();
                         //                        updateMap();
 
-                        drawfeatures();
+
 
                     });
 
@@ -384,7 +376,7 @@
 
             function drawInfo() {
                 var info = L.control({
-                    position: 'topright'
+                    position: 'topleft'
                 });
 
                 info.onAdd = function (map) {
@@ -398,42 +390,53 @@
 
                 dataLayer.eachLayer(function (layer) {
                     layer.on('mouseover', function () {
-                        updateInfo(this);// info isnt working
-                        console.log(this);
+                        
+
+                        updateInfo(this); 
 
                         //                    set the style on mouseover to show a yellow outline
                         this.setStyle({
                             color: 'yellow'
                             , weight: 3
-                            , opacity: 0.9
+                            , opacity: 1
                         })
+                        
+                        this.bringToFront();
 
                     });
 
-                })
+                    layer.on('mouseout', function () {
+                        this.setStyle({
+                            color: 'black'
+                            , opacity: 1
+                            , weight: 2
+                        })
+                    })
+
+                });
+                
+                dataLayer.on('mouseover', function () {
+                    $(".info").show();
+                });
 
             }
 
             function updateInfo(feature) {
-                var props = feature.properties;
+                
+                var props = feature.feature.properties.comment;
+                
+                console.log(props);
+                
+                var html = "<h3>" + props
+                
+                $(".info").html(html);
 
+                dataLayer.on('mouseover', function () {
+                    $(".info").show();
+                })
 
-//                dataLayer.on('mouseover')
-//                    , function () {
-//                        //                    updateInfo(this);
-//
-//                        console.log(dataLayer); // why isnt this working?
-//                        this.setStyle({
-//                            color: 'yellow'
-//                            , weight: 3
-//                            , opacity: 0.9
-//                        })
-//                    }
 
             }
-
-
-
 
             //!!!update csv content
 
