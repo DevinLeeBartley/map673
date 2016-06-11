@@ -122,7 +122,7 @@
             right: 0;
             top: 0;
             bottom: 0;
-            width: 33%;
+            width: 25%;
             background: whitesmoke;
             border-left: 2px solid #1C9976;
             overflow-y: scroll;
@@ -206,10 +206,7 @@
 
         <h1>Roads I've Travelled</h1>
         <h2>An interactive web map</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam mollis laoreet elementum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec mi eros, rutrum sed orci eget, venenatis varius est. Pellentesque accumsan est vitae risus malesuada fringilla.</p>
-        <p>Cras at massa in leo aliquam fermentum. Nunc auctor vestibulum sagittis. Aliquam pulvinar, ipsum in pulvinar tincidunt, enim metus fermentum tellus, quis accumsan ex lorem ut ante. Phasellus fermentum orci eget interdum ultrices. Proin vitae magna id odio ultricies placerat quis id ex. Aenean volutpat volutpat gravida.</p>
-        <p>Cras at massa in leo aliquam fermentum. Nunc auctor vestibulum sagittis. Aliquam pulvinar, ipsum in pulvinar tincidunt, enim metus fermentum tellus, quis accumsan ex lorem ut ante. Phasellus fermentum orci eget interdum ultrices. Proin vitae magna id odio ultricies placerat quis id ex. Aenean volutpat volutpat gravida.</p>
-        <p>Cras at massa in leo aliquam fermentum. Nunc auctor vestibulum sagittis. Aliquam pulvinar, ipsum in pulvinar tincidunt, enim metus fermentum tellus, quis accumsan ex lorem ut ante. Phasellus fermentum orci eget interdum ultrices. Proin vitae magna id odio ultricies placerat quis id ex. Aenean volutpat volutpat gravida.</p>
+        <p>This interactive map is a spatial diary of various routes through space that I have travelled by car. The collection of road trips details the places and life events that have made me who I am. </p>        <p>Use the slider bar below to see which year I have travelled certain roadways. Moving your mouse over a particular road will show you more information about my trip.</p>
 
         <!--            need to add a info box here that shows the current highlighted year-->
         <div id='ui-controls'>
@@ -234,6 +231,7 @@
         noUiSlider.create(connectSlider, {
             start: [1986, 2016]
             , connect: true
+            , step: 1
             , range: {
                 'min': 1986
                 , 'max': 2016
@@ -248,13 +246,21 @@
         connectBase.appendChild(connectBar);
 
         connectSlider.noUiSlider.on('update', function (values, handle, a, b, handlePositions) {
-
+            
             var offset = handlePositions[handle];
 
             // Right offset is 100% - left offset
             if (handle === 1) {
                 offset = 100 - offset;
             }
+            
+            console.log(connectSlider.noUiSlider.get());
+            
+//            var value = connectSlider.noUiSLider.get();
+            
+//            console.log(value[0]);
+            
+//            console.log(offset);
 
             // Pick left for the first handle, right for the second.
             connectBar.style[handle ? 'right' : 'left'] = offset + '%';
