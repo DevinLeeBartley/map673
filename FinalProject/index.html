@@ -7,7 +7,7 @@
     <!-- In <head> -->
     <link href="nouislider.min.css" rel="stylesheet">
 
-    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+<!--    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">-->
 
 
     <script src='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
@@ -61,7 +61,7 @@
             color: #444;
             display: block;
             height: 26px;
-            width: 45px;
+            width: 105px;
             line-height: 1.45 !important;
             text-align: center;
             text-decoration: none;
@@ -133,10 +133,11 @@
             position: absolute;
             right: 0;
             top: 0;
-            bottom: 0;
+            bottom: 180;
             width: 28%;
             background: whitesmoke;
-            border-left: 2px solid #1C9976;
+            border-left: 2px solid black;
+            border-bottom: 2px solid black;
             overflow-y: scroll;
         }
         
@@ -157,14 +158,14 @@
             background: whitesmoke;
             font-weight: 700;
             font-size: 1.2em;
-            text-align: right;
+            text-align: center;
         }
         
         #side-panel p {
             margin: 8px 0 4px;
             padding: 0 25px 0 15px;
             color: #677077;
-            text-align: right;
+            text-align: center;
             font-size: 1.em;
             font-weight: 400;
             bottom: 5%;
@@ -225,8 +226,8 @@
 
         <h1>Roads I've Travelled</h1>
         <h2>An interactive web map</h2>
-        <p>This interactive map is a spatial diary of various routes through space that I have travelled by car. The collection of road trips details the places and life events that have made me who I am. </p>
-        <p>Use the slider bar below to see which year I have travelled certain roadways. Moving your mouse over a particular road will show you more information about my trip.</p>
+        <p>This map is a spatial diary of various routes through space that I have travelled by car and bus. These road trips provide a good glimpse into my personal background and experiences that have shaped me over the course of my life. </p>
+        <p>Use the slider bar below to highlight which year I have travelled certain roadways. Moving your mouse over roads will show you more information about a particular trip.</p>
         <div id='current'></div>
 
         <div id='info'></div>
@@ -345,6 +346,8 @@
                 , zoomHomeTitle: 'Zoom home'
                 , zoomCanadaText: 'Canada'
                 , zoomCanadaTitle: 'Zoom Canada'
+                , zoomSamericaText: 'Argentina'
+                ,zoomSamericaTitle: 'Zoom S America'
             },
 
             onAdd: function (map) {
@@ -358,6 +361,9 @@
                     , controlName + '-home', container, this._zoomHome);
                 this._zoomCanadaButtom = this._createButton(options.zoomCanadaText, options.zoomHomeTitle
                     , controlName + '-canada', container, this._zoomCanada);
+                this.zoomSamericaButton = 
+this._createButton(options.zoomSamericaText, options.zoomHomeTitle
+                    , controlName + '-Samerica', container, this._zoomSamerica);
                 this._zoomOutButton = this._createButton(options.zoomOutText, options.zoomOutTitle
                     , controlName + '-out', container, this._zoomOut);
 
@@ -384,7 +390,11 @@
             },
             
             _zoomCanada: function (e) {
-                map.setView([53, -85], zoom);
+                map.setView([56, -110], zoom);
+            },
+            
+            _zoomSamerica: function (e) {
+                map.setView([-34, -58], zoom);
             },
 
             _createButton: function (html, title, className, container, fn) {
