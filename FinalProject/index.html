@@ -7,6 +7,7 @@
     <!-- In <head> -->
     <link href="nouislider.min.css" rel="stylesheet">
 
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 
 
     <script src='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
@@ -52,6 +53,19 @@
             top: 0;
             bottom: 0;
             width: 100%;
+        }
+        
+        .leaflet-bar a {
+            background-color: #fff;
+            border-bottom: 1px solid #ccc;
+            color: #444;
+            display: block;
+            height: 26px;
+            width: 45px;
+            line-height: 1.45 !important;
+            text-align: center;
+            text-decoration: none;
+            font: bold 18px 'Lucida Console', Monaco, monospace;
         }
         
         .info {
@@ -197,7 +211,13 @@
 
 
 <body>
+
     <div id='map'></div>
+
+
+
+
+
     <div id='side-panel'>
 
 
@@ -259,13 +279,17 @@
         //            , 'max': [2016]
         //        };
 
-
+        var lat = 37.6;
+        var lng = -85.3;
+        var zoom = 4;
+        
+        
 
 
 
 
         var attribute = "1986" // set a default attribute where the slider starts
-        
+
 
 
         //            var labels = {
@@ -292,9 +316,13 @@
             center: [37.6, -85.3]
             , zoom: 4
             , dragging: true
-            , zoomControl: true
+            , zoomControl: false
         }
+
+
         var map = L.map('map', options);
+
+        map.setView([lat, lng], zoom);
 
         // would prefer to use the mapbox base layer
         var MapQuestOpen_OSM = L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/{type}/{z}/{x}/{y}.{ext}', {
@@ -304,6 +332,93 @@
             , subdomains: '1234'
         }).addTo(map);
 
+
+        // custom zoom bar control that includes a Zoom Home function
+        L.Control.zoomHome = L.Control.extend({
+            options: {
+                position: 'topleft'
+                , zoomInText: '+'
+                , zoomInTitle: 'Zoom in'
+                , zoomOutText: '-'
+                , zoomOutTitle: 'Zoom out'
+                , zoomHomeText: 'USA'
+                , zoomHomeTitle: 'Zoom home'
+                , zoomCanadaText: 'Canada'
+                , zoomCanadaTitle: 'Zoom Canada'
+            },
+
+            onAdd: function (map) {
+                var controlName = 'gin-control-zoom'
+                    , container = L.DomUtil.create('div', controlName + ' leaflet-bar')
+                    , options = this.options;
+
+                this._zoomInButton = this._createButton(options.zoomInText, options.zoomInTitle
+                    , controlName + '-in', container, this._zoomIn);
+                this._zoomHomeButton = this._createButton(options.zoomHomeText, options.zoomHomeTitle
+                    , controlName + '-home', container, this._zoomHome);
+                this._zoomCanadaButtom = this._createButton(options.zoomCanadaText, options.zoomHomeTitle
+                    , controlName + '-canada', container, this._zoomCanada);
+                this._zoomOutButton = this._createButton(options.zoomOutText, options.zoomOutTitle
+                    , controlName + '-out', container, this._zoomOut);
+
+                this._updateDisabled();
+                map.on('zoomend zoomlevelschange', this._updateDisabled, this);
+
+                return container;
+            },
+
+            onRemove: function (map) {
+                map.off('zoomend zoomlevelschange', this._updateDisabled, this);
+            },
+
+            _zoomIn: function (e) {
+                this._map.zoomIn(e.shiftKey ? 3 : 1);
+            },
+
+            _zoomOut: function (e) {
+                this._map.zoomOut(e.shiftKey ? 3 : 1);
+            },
+
+            _zoomHome: function (e) {
+                map.setView([lat, lng], zoom);
+            },
+            
+            _zoomCanada: function (e) {
+                map.setView([53, -85], zoom);
+            },
+
+            _createButton: function (html, title, className, container, fn) {
+                var link = L.DomUtil.create('a', className, container);
+                link.innerHTML = html;
+                link.href = '#';
+                link.title = title;
+
+                L.DomEvent.on(link, 'mousedown dblclick', L.DomEvent.stopPropagation)
+                    .on(link, 'click', L.DomEvent.stop)
+                    .on(link, 'click', fn, this)
+                    .on(link, 'click', this._refocusOnMap, this);
+
+                return link;
+            },
+
+            _updateDisabled: function () {
+                var map = this._map
+                    , className = 'leaflet-disabled';
+
+                L.DomUtil.removeClass(this._zoomInButton, className);
+                L.DomUtil.removeClass(this._zoomOutButton, className);
+
+                if (map._zoom === map.getMinZoom()) {
+                    L.DomUtil.addClass(this._zoomOutButton, className);
+                }
+                if (map._zoom === map.getMaxZoom()) {
+                    L.DomUtil.addClass(this._zoomInButton, className);
+                }
+            }
+        });
+        // add the new control to the map
+        var zoomHome = new L.Control.zoomHome();
+        zoomHome.addTo(map);
 
         var myStyle = {
             "color": 'black'
@@ -361,7 +476,7 @@
         };
 
         function changeStyle() {
-//            drawCurrent();
+            //            drawCurrent();
 
             dataLayer.eachLayer(function (layer) {
                 console.log(layer.feature.properties.year);
@@ -435,20 +550,20 @@
 
                     console.log(attribute);
 
-//                    updateInfo(attribute);
+                    //                    updateInfo(attribute);
 
-//                    attribute = layer.feature.properties.year;
+                    //                    attribute = layer.feature.properties.year;
 
-//                    layer.setStyle({
-//                        color: 'yellow'
-//                        , weight: 2
-//                        , opacity: 1
-//
-//                    })
-//                    layer.bringToFront();
-                
+                    //                    layer.setStyle({
+                    //                        color: 'yellow'
+                    //                        , weight: 2
+                    //                        , opacity: 1
+                    //
+                    //                    })
+                    //                    layer.bringToFront();
+
                     var html3 = "Year: " + attribute
-                
+
                     $(".current").html(html3);
 
 
@@ -471,7 +586,7 @@
             };
 
 
-            
+
 
             info.addTo(map);
             $(".info").hide();
@@ -532,10 +647,10 @@
             };
 
 
-            
+
 
             current.addTo(map);
-//                        $(".current").hide();
+            //                        $(".current").hide();
 
             $(".current").html("Year: 1986");
             dataLayer.eachLayer(function (layer) {
@@ -585,14 +700,14 @@
         function updateInfo(feature) {
 
             var props = feature.feature.properties.comment;
-            
-//            console.log(props);
 
             //            console.log(props);
 
-            var html = "<h1>" + "Year: " + feature.feature.properties.year + "<h3>" + props + "<br> <h1> Start: " + feature.feature.properties.start + "<br> End: " + feature.feature.properties.end
+            //            console.log(props);
 
-            var html2 = "Year: " + feature.feature.properties.year 
+            var html = "<h1>" + "Year: " + feature.feature.properties.year + "<h3>" + props + "<br> <h1> Start: " + feature.feature.properties.end + "<br> End: " + feature.feature.properties.start
+
+            var html2 = "Year: " + feature.feature.properties.year
 
             //            $(".side-panel")
 
