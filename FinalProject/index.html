@@ -134,7 +134,7 @@
             position: absolute;
             right: 0;
             top: 0;
-            bottom: 180;
+            bottom: 385;
             width: 28%;
             background: whitesmoke;
             border-left: 2px solid black;
@@ -145,10 +145,11 @@
         h1 {
             padding: 8px 25px 8px 15px;
             margin: 0;
-            background: #c0dfd9;
+/*            background: #c0dfd9;*/
+            background: #33CC99;
             color: black;
             font-weight: 700;
-            font-size: 1.5em;
+            font-size: 1.2em;
             text-align: center;
         }
         
@@ -167,7 +168,7 @@
             padding: 0 25px 0 15px;
             color: #677077;
             text-align: center;
-            font-size: 1.em;
+            font-size: 0.9em;
             font-weight: 400;
             bottom: 5%;
         }
@@ -225,7 +226,7 @@
 
 
 
-        <h1>Roads I've Travelled</h1>
+        <h1>Roadtrips of My Life</h1>
         <h2>An interactive web map</h2>
         <p>This map is a spatial diary of various routes through space that I have travelled by car and bus. These road trips provide a good glimpse into my personal background and experiences that have shaped me over the course of my life. </p>
         <p>Use the slider bar below to highlight which year I have travelled certain roadways. Moving your mouse over roads will show you more information about a particular trip.</p>
@@ -282,8 +283,8 @@
         //        };
 
         var lat = 37.6;
-        var lng = -85.3;
-        var zoom = 4;
+        var lng = -95.3;
+        var zoom = 5;
         
         
 
@@ -316,7 +317,7 @@
 
         var options = {
             center: [37.6, -85.3]
-            , zoom: 4
+            , zoom: 5
             , dragging: true
             , zoomControl: false
         }
@@ -327,18 +328,25 @@
         map.setView([lat, lng], zoom);
 
         // would prefer to use the mapbox base layer
-        var MapQuestOpen_OSM = L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/{type}/{z}/{x}/{y}.{ext}', {
-            type: 'map'
-            , ext: 'jpg'
-            , attribution: 'Tiles Courtesy of <a href="http://www.mapquest.com/">MapQuest</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            , subdomains: '1234'
-        }).addTo(map);
+//        var MapQuestOpen_OSM = L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/{type}/{z}/{x}/{y}.{ext}', {
+//            type: 'map'
+//            , ext: 'jpg'
+//            , attribution: 'Tiles Courtesy of <a href="http://www.mapquest.com/">MapQuest</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+//            , subdomains: '1234'
+//        }).addTo(map);
+        
+        var MapBoxTiles_devin = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    maxZoom: 18,
+    id: 'mapbox.streets',
+    accessToken: 'pk.eyJ1IjoiZGJhcnRsZXkiLCJhIjoiY2lwYnJjb3drMDA3aXNubTd4MmtzYXN5cyJ9.SuTq31wTJwyVb37BXVadxQ'
+}).addTo(map);
 
 
         // custom zoom bar control that includes a Zoom Home function
         L.Control.zoomHome = L.Control.extend({
             options: {
-                position: 'topleft'
+                position: 'bottomright'
                 , zoomInText: '+'
                 , zoomInTitle: 'Zoom in'
                 , zoomOutText: '-'
@@ -387,11 +395,11 @@ this._createButton(options.zoomSamericaText, options.zoomHomeTitle
             },
 
             _zoomHome: function (e) {
-                map.setView([lat, lng], zoom);
+                map.setView([lat, lng], 5);
             },
             
             _zoomCanada: function (e) {
-                map.setView([56, -110], zoom);
+                map.setView([53, -115], 4);
             },
             
             _zoomSamerica: function (e) {
@@ -431,17 +439,17 @@ this._createButton(options.zoomSamericaText, options.zoomHomeTitle
         var zoomHome = new L.Control.zoomHome();
         zoomHome.addTo(map);
 
-        var myStyle = {
-            "color": 'black'
-            , "weight": 2
-            , "opacity": 1
-        };
-
-        var highlightedStyle = {
-            "color": 'yellow'
-            , "weight": 1
-            , "opacity": 1
-        }
+//        var myStyle = {
+//            "color": 'black'
+//            , "weight": 2
+//            , "opacity": 1
+//        };
+//
+//        var highlightedStyle = {
+//            "color": 'yellow'
+//            , "weight": 1
+//            , "opacity": 1
+//        }
 
         var dataLayer, attribute = "year";
 
@@ -455,25 +463,25 @@ this._createButton(options.zoomSamericaText, options.zoomHomeTitle
 
                     return {
 //                        color: '#949494'
-                        color: 'blue'
+                        color: '#5258F9'
                         , opacity: 1
-                        , weight: 1
+                        , weight: 5
                     };
                 }
             }).addTo(map);
 
 
             //                Do the same as above for the second dataset. This doesnt appear to be working correctly.
-            dataLayer2 = L.geoJson(roadssample, {
-                style: function (feature) {
-                    return {
-//                        color: '#949494'
-                        color: 'blue'
-                        , opacity: 1
-                        , weight: 1
-                    }
-                }
-            }).addTo(map);
+//            dataLayer2 = L.geoJson(roadssample, {
+//                style: function (feature) {
+//                    return {
+////                        color: '#949494'
+//                        color: '#5258F9'
+//                        , opacity: 1
+//                        , weight: 5
+//                    }
+//                }
+//            }).addTo(map);
 
 
             dataLayer.bringToFront();
@@ -504,8 +512,8 @@ this._createButton(options.zoomSamericaText, options.zoomHomeTitle
                     layer.bringToFront();
                 } else {
                     layer.setStyle({
-                        color: 'blue'
-                        , weight: 1
+                        color: '#5258F9'
+                        , weight: 5
                         , opacity: 1
                     })
 
@@ -614,7 +622,7 @@ this._createButton(options.zoomSamericaText, options.zoomHomeTitle
 
                     layer.setStyle({
                         color: 'yellow'
-                        , weight: 2
+                        , weight: 6
                         , opacity: 1
 
                     })
@@ -628,8 +636,8 @@ this._createButton(options.zoomSamericaText, options.zoomHomeTitle
                 layer.on('mouseout', function () {
                     layer.setStyle({
 //                        color: '#949494'
-                        color: 'blue'
-                        , weight: 1
+                        color: '#5258F9'
+                        , weight: 4
                         , opacity: 1
                     })
                 })
@@ -648,7 +656,7 @@ this._createButton(options.zoomSamericaText, options.zoomHomeTitle
         //        functin for drawing current year
         function drawCurrent() {
             var current = L.control({
-                position: 'topleft'
+                position: 'bottomright'
             , });
 
 
@@ -680,7 +688,7 @@ this._createButton(options.zoomSamericaText, options.zoomHomeTitle
 
                     layer.setStyle({
                         color: 'yellow'
-                        , weight: 2
+                        , weight: 6
                         , opacity: 1
 
                     })
@@ -694,9 +702,9 @@ this._createButton(options.zoomSamericaText, options.zoomHomeTitle
                 layer.on('mouseout', function () {
                     layer.setStyle({
 //                        color: '#949494'
-                        color: 'blue'
-                        , weight: 1
-                        , opacity: 0.5
+                        color: '#5258F9'
+                        , weight: 4
+                        , opacity: 1
                     })
                 })
 
