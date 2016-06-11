@@ -201,12 +201,14 @@
     <div id='map'></div>
     <div id='side-panel'>
 
-        <div id='info'></div>
+        
 
 
         <h1>Roads I've Travelled</h1>
         <h2>An interactive web map</h2>
         <p>This interactive map is a spatial diary of various routes through space that I have travelled by car. The collection of road trips details the places and life events that have made me who I am. </p>        <p>Use the slider bar below to see which year I have travelled certain roadways. Moving your mouse over a particular road will show you more information about my trip.</p>
+        
+        <div id='info'></div>
 
         <!--            need to add a info box here that shows the current highlighted year-->
         <div id='ui-controls'>
@@ -254,7 +256,12 @@
                 offset = 100 - offset;
             }
             
-            console.log(connectSlider.noUiSlider.get());
+//            console.log(connectSlider.noUiSlider.get());
+            
+            var value = []
+            
+            value = connectSlider.noUiSlider.get()
+            
             
 //            var value = connectSlider.noUiSLider.get();
             
@@ -506,11 +513,12 @@
 
             var props = feature.feature.properties.comment;
 
-            console.log(props);
+//            console.log(props);
 
             var html = "<h1>" + "Year: " + feature.feature.properties.year + "<h3>" + props
 
             $(".info").html(html);
+            $(".side-panel").html(html);
 
             dataLayer.on('mouseover', function () {
                 $(".info").show();
