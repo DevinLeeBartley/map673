@@ -80,7 +80,7 @@
             box-shadow: 0 0 15px whitesmoke;
             border-radius: 3px;
             text-align: center;
-            max-width: 100%;
+            max-width: 80%;
             font: "Ubuntu", sans-serif;
             font-weight: 700;
             color: black;
@@ -269,6 +269,8 @@
     <script src="roadssample.geojson" type="text/javascript"></script>
 
     <script>
+
+
         //        var connectSlider = document.getElementById('connect');
         //
         //        noUiSlider.create(connectSlider, {
@@ -421,7 +423,7 @@
             },
 
             _zoomSamerica: function (e) {
-                map.setView([-30, -58], 6);
+                map.setView([-26, -58], 5);
             },
 
             _createButton: function (html, title, className, container, fn) {
@@ -457,19 +459,7 @@
         var zoomHome = new L.Control.zoomHome();
         zoomHome.addTo(map);
 
-        //        var myStyle = {
-        //            "color": 'black'
-        //            , "weight": 2
-        //            , "opacity": 1
-        //        };
-        //
-        //        var highlightedStyle = {
-        //            "color": 'yellow'
-        //            , "weight": 1
-        //            , "opacity": 1
-        //        }
-
-
+        //Below is a JSON object storing all of the locations I have lived in over my life for more than 1 month
         var myHomes = {
             "homes": [
                 {
@@ -478,77 +468,84 @@
                     , "Lng": -104.99
                     , "Description": "I lived in Denver CO while I worked as a USPS mail carrier."
                 }
+                
                 , {
                     "Name": "Longmont CO"
                     , "Lat": 40.16
                     , "Lng": -105.10
                     , "Description": "I was raised in Longmont CO and spend most of my adolescent life there."
             }
+                
                 , {
                     "Name": "Boulder CO"
                     , "Lat": 40.01
                     , "Lng": -105.27
                     , "Description": "I was born in Boulder CO and lived there for the first 4 years of my life"
             }
+                
                 , {
                     "Name": "Tuscon AZ"
                     , "Lat": 32.22
                     , "Lng": -110.92
                     , "Description": "I moved to Tuscon AZ with my parents when I was young as my dad found a job there."
             }
+                
                 , {
                     "Name": "Rochester MN"
                     , "Lat": 44.01
                     , "Lng": -92.480
                     , "Description": "I moved to Rochester MN with my parents when I was young as my dad found a job there."
             }
+                
                 , {
                     "Name": "Vancouver BC"
                     , "Lat": 49.28
                     , "Lng": -123.12
                     , "Description": "I studied Geography at the  University of BC in Vancouver."
             }
+                
                 , {
                     "Name": "Williams Lake BC"
                     , "Lat": 52.14
                     , "Lng": -122.14
                     , "Description": "I moved to Williams Lake for my first GIS internship job with the Forest Service."
             }
+                
                 , {
                     "Name": "Nelson BC"
                     , "Lat": 49.49
                     , "Lng": -117.29
                     , "Description": "I moved to Nelson BC for second GIS internship job with the Forest Service."
             }
+                
                 , {
                     "Name": "King Salmon AK"
                     , "Lat": 58.68
                     , "Lng": -156.66
                     , "Description": "I worked for the National Park Service in King Salmon doing invasive plant surveys and GIS work."
             }
+                
                 , {
                     "Name": "Edmonton AB"
                     , "Lat": 53.54
                     , "Lng": -113.49
-                    , "Description": "I moved to Edmonton AB for my first permanent full time job in GIS work at an environmental consulting company."
+                    , "Description": "I moved to Edmonton AB for my first permanent full time job doing GIS work at an environmental consulting company."
             }
+                
                 , {
                     "Name": "Edmonton AB"
                     , "Lat": 49.24
                     , "Lng": -122.98
                     , "Description": "I lived in Burnaby BC for a summer while I worked for a salmon habitat restoration company in Surrey BC."
             }
+                
                 , {
                     "Name": "Parana Argentina"
                     , "Lat": -31.74
                     , "Lng": -60.5115
-                    , "Description": "I lived in Parana Argentina for a summer during highschool where I stayed with a host family and attended a local school to improve my Spanish."
-            },
-
-
-
-
-            ]
+                    , "Description": "I lived in Parana, Argentina for a summer during highschool where I stayed with a host family and attended a local school to improve my Spanish."
+            }
+            , ]
         };
 
         console.log(myHomes.homes.name);
