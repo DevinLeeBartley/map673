@@ -7,7 +7,7 @@
     <!-- In <head> -->
     <link href="nouislider.min.css" rel="stylesheet">
 
-<!--    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">-->
+    <!--    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">-->
 
 
     <script src='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
@@ -66,28 +66,45 @@
             line-height: 1.45 !important;
             text-align: center;
             text-decoration: none;
-            font: bold 18px 'Lucida Console', Monaco, monospace;
+            font: bold 18px 'Ubuntu', sans-serif;
         }
         
         .info {
             padding: 8px 15px;
             font-size: 1em;
-            background: rgba(255, 255, 255, 1);
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            padding: 8px 15px 8px 15px;
+/*            background: whitesmoke, 1;*/
+/*            box-shadow: whitesmoke, 1;*/
+/*            color: black;*/
+            
+            background: whitesmoke;
+            box-shadow: 0 0 15px whitesmoke;
             border-radius: 3px;
-            text-align: right;
+            
+
+            text-align: center;
             max-width: 100%;
-        }
-        
-        .info h1 {
-            margin: 0;
-            font-size: 1.4em;
-            background: rgba(255, 255, 255, 1);
+            font: "Ubuntu", sans-serif;
+            font-weight: 700;
+            color: black;
         }
         
         .info h3 {
             margin: 0;
-            font-size: 1.0em
+            font-size: 1.3em;
+            background: whitesmoke, 1;
+/*            font: 'Ubuntu', sans-serif;*/
+            font-weight: 700;
+            color: black;
+        }
+        
+        .info h4 {
+            margin: 0;
+            color: whitesmoke;
+            font-size: 1.5em;
+            font-weight: 900;
+            color: black;
+/*            font: 'Ubuntu', sans-serif;*/
         }
         
         .current {
@@ -108,12 +125,14 @@
         
         #ui-controls {
             position: absolute;
-            bottom: 3%;
-            width: 90%;
+            right: 0%;
+            bottom: 56%;
+            width: 25%;
             padding: 8px 15px 8px 15px;
             background: rgba(75, 75, 75, 0.8);
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 0 0px rgba(0, 0, 0, 0.2);
             border-radius: 5px;
+            float: right;
             color: whitesmoke;
         }
         /*        add the year-slider element*/
@@ -134,7 +153,7 @@
             position: absolute;
             right: 0;
             top: 0;
-            bottom: 385;
+            bottom: 470;
             width: 28%;
             background: whitesmoke;
             border-left: 2px solid black;
@@ -145,11 +164,10 @@
         h1 {
             padding: 8px 25px 8px 15px;
             margin: 0;
-/*            background: #c0dfd9;*/
             background: #33CC99;
             color: black;
-            font-weight: 700;
-            font-size: 1.2em;
+            font-weight: 900;
+            font-size: 1.7em;
             text-align: center;
         }
         
@@ -226,26 +244,28 @@
 
 
 
-        <h1>Roadtrips of My Life</h1>
+        <h1>My Roadtrip Diary</h1>
         <h2>An interactive web map</h2>
-        <p>This map is a spatial diary of various routes through space that I have travelled by car and bus. These road trips provide a good glimpse into my personal background and experiences that have shaped me over the course of my life. </p>
+        <p>This map is a spatial diary of various routes over land that I have travelled by car and bus. These road trips provide a good glimpse into my personal background and experiences that have shaped me over the course of my life. </p>
         <p>Use the slider bar below to highlight which year I have travelled certain roadways. Moving your mouse over roads will show you more information about a particular trip.</p>
         <div id='current'></div>
 
         <div id='info'></div>
 
         <!--            need to add a info box here that shows the current highlighted year-->
-        <div id='ui-controls'>
-            <label>
-                <!-- In <body> -->
-                <script src="nouislider.min.js"></script>
-                <div id='connect'></div>
+
+    </div>
+
+    <div id='ui-controls'>
+        <label>
+            <!-- In <body> -->
+            <script src="nouislider.min.js"></script>
+            <div id='connect'></div>
 
 
-                <span class="min">1986</span><span class="max">2016</span>
-                <input type="range" min="1986" , max="2016" , value="1986" , step="1" , class="year-slider">
-            </label>
-        </div>
+            <span class="min">1986</span><span class="max">2016</span>
+            <input type="range" min="1986" , max="2016" , value="1986" , step="1" , class="year-slider">
+        </label>
     </div>
 
     <script src="routes.geojson" type="text/javascript"></script>
@@ -285,8 +305,8 @@
         var lat = 37.6;
         var lng = -95.3;
         var zoom = 5;
-        
-        
+
+
 
 
 
@@ -328,19 +348,19 @@
         map.setView([lat, lng], zoom);
 
         // would prefer to use the mapbox base layer
-//        var MapQuestOpen_OSM = L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/{type}/{z}/{x}/{y}.{ext}', {
-//            type: 'map'
-//            , ext: 'jpg'
-//            , attribution: 'Tiles Courtesy of <a href="http://www.mapquest.com/">MapQuest</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-//            , subdomains: '1234'
-//        }).addTo(map);
-        
+        //        var MapQuestOpen_OSM = L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/{type}/{z}/{x}/{y}.{ext}', {
+        //            type: 'map'
+        //            , ext: 'jpg'
+        //            , attribution: 'Tiles Courtesy of <a href="http://www.mapquest.com/">MapQuest</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        //            , subdomains: '1234'
+        //        }).addTo(map);
+
         var MapBoxTiles_devin = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-    maxZoom: 18,
-    id: 'mapbox.streets',
-    accessToken: 'pk.eyJ1IjoiZGJhcnRsZXkiLCJhIjoiY2lwYnJjb3drMDA3aXNubTd4MmtzYXN5cyJ9.SuTq31wTJwyVb37BXVadxQ'
-}).addTo(map);
+            attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>'
+            , maxZoom: 18
+            , id: 'mapbox.streets'
+            , accessToken: 'pk.eyJ1IjoiZGJhcnRsZXkiLCJhIjoiY2lwYnJjb3drMDA3aXNubTd4MmtzYXN5cyJ9.SuTq31wTJwyVb37BXVadxQ'
+        }).addTo(map);
 
 
         // custom zoom bar control that includes a Zoom Home function
@@ -351,12 +371,12 @@
                 , zoomInTitle: 'Zoom in'
                 , zoomOutText: '-'
                 , zoomOutTitle: 'Zoom out'
-                , zoomHomeText: 'USA'
+                , zoomHomeText: 'America'
                 , zoomHomeTitle: 'Zoom home'
                 , zoomCanadaText: 'Canada'
                 , zoomCanadaTitle: 'Zoom Canada'
                 , zoomSamericaText: 'Argentina'
-                ,zoomSamericaTitle: 'Zoom S America'
+                , zoomSamericaTitle: 'Zoom S America'
             },
 
             onAdd: function (map) {
@@ -370,9 +390,9 @@
                     , controlName + '-home', container, this._zoomHome);
                 this._zoomCanadaButtom = this._createButton(options.zoomCanadaText, options.zoomHomeTitle
                     , controlName + '-canada', container, this._zoomCanada);
-                this.zoomSamericaButton = 
-this._createButton(options.zoomSamericaText, options.zoomHomeTitle
-                    , controlName + '-Samerica', container, this._zoomSamerica);
+                this.zoomSamericaButton =
+                    this._createButton(options.zoomSamericaText, options.zoomHomeTitle
+                        , controlName + '-Samerica', container, this._zoomSamerica);
                 this._zoomOutButton = this._createButton(options.zoomOutText, options.zoomOutTitle
                     , controlName + '-out', container, this._zoomOut);
 
@@ -397,13 +417,13 @@ this._createButton(options.zoomSamericaText, options.zoomHomeTitle
             _zoomHome: function (e) {
                 map.setView([lat, lng], 5);
             },
-            
+
             _zoomCanada: function (e) {
                 map.setView([53, -115], 4);
             },
-            
+
             _zoomSamerica: function (e) {
-                map.setView([-34, -58], zoom);
+                map.setView([-30, -58], 6);
             },
 
             _createButton: function (html, title, className, container, fn) {
@@ -439,17 +459,17 @@ this._createButton(options.zoomSamericaText, options.zoomHomeTitle
         var zoomHome = new L.Control.zoomHome();
         zoomHome.addTo(map);
 
-//        var myStyle = {
-//            "color": 'black'
-//            , "weight": 2
-//            , "opacity": 1
-//        };
-//
-//        var highlightedStyle = {
-//            "color": 'yellow'
-//            , "weight": 1
-//            , "opacity": 1
-//        }
+        //        var myStyle = {
+        //            "color": 'black'
+        //            , "weight": 2
+        //            , "opacity": 1
+        //        };
+        //
+        //        var highlightedStyle = {
+        //            "color": 'yellow'
+        //            , "weight": 1
+        //            , "opacity": 1
+        //        }
 
         var dataLayer, attribute = "year";
 
@@ -462,7 +482,7 @@ this._createButton(options.zoomSamericaText, options.zoomHomeTitle
                 style: function (feature) {
 
                     return {
-//                        color: '#949494'
+                        //                        color: '#949494'
                         color: '#5258F9'
                         , opacity: 1
                         , weight: 5
@@ -472,16 +492,16 @@ this._createButton(options.zoomSamericaText, options.zoomHomeTitle
 
 
             //                Do the same as above for the second dataset. This doesnt appear to be working correctly.
-//            dataLayer2 = L.geoJson(roadssample, {
-//                style: function (feature) {
-//                    return {
-////                        color: '#949494'
-//                        color: '#5258F9'
-//                        , opacity: 1
-//                        , weight: 5
-//                    }
-//                }
-//            }).addTo(map);
+            //            dataLayer2 = L.geoJson(roadssample, {
+            //                style: function (feature) {
+            //                    return {
+            ////                        color: '#949494'
+            //                        color: '#5258F9'
+            //                        , opacity: 1
+            //                        , weight: 5
+            //                    }
+            //                }
+            //            }).addTo(map);
 
 
             dataLayer.bringToFront();
@@ -505,7 +525,7 @@ this._createButton(options.zoomSamericaText, options.zoomHomeTitle
                 if (layer.feature.properties.year === attribute) {
                     layer.setStyle({
                         color: 'yellow'
-                        , weight: 2
+                        , weight: 6
                         , opacity: 1
 
                     })
@@ -635,7 +655,7 @@ this._createButton(options.zoomSamericaText, options.zoomHomeTitle
 
                 layer.on('mouseout', function () {
                     layer.setStyle({
-//                        color: '#949494'
+                        //                        color: '#949494'
                         color: '#5258F9'
                         , weight: 4
                         , opacity: 1
@@ -701,7 +721,7 @@ this._createButton(options.zoomSamericaText, options.zoomHomeTitle
 
                 layer.on('mouseout', function () {
                     layer.setStyle({
-//                        color: '#949494'
+                        //                        color: '#949494'
                         color: '#5258F9'
                         , weight: 4
                         , opacity: 1
@@ -728,7 +748,7 @@ this._createButton(options.zoomSamericaText, options.zoomHomeTitle
 
             //            console.log(props);
 
-            var html = "<h1>" + "Year: " + feature.feature.properties.year + "<h3>" + props + "<br> <h1> Start: " + feature.feature.properties.end + "<br> End: " + feature.feature.properties.start
+            var html = "<h3>" + "Year: " + feature.feature.properties.year + "<br>Start: " + feature.feature.properties.end + "<br> End: " +  feature.feature.properties.start + "</h3><h4>" + props 
 
             var html2 = "Year: " + feature.feature.properties.year
 
